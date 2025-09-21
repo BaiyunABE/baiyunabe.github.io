@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Tags on Abe Blog</title>
+    <link>https://baiyunabe.github.io/tags/</link>
+    <description>Recent content in Tags on Abe Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 21 Sep 2025 15:44:48 +0800</lastBuildDate><atom:link href="https://baiyunabe.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C语言</title>
+      <link>https://baiyunabe.github.io/tags/c%E8%AF%AD%E8%A8%80/</link>
+      <pubDate>Sun, 21 Sep 2025 15:44:48 +0800</pubDate>
+      
+      <guid>https://baiyunabe.github.io/tags/c%E8%AF%AD%E8%A8%80/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>scanf</title>
+      <link>https://baiyunabe.github.io/tags/scanf/</link>
+      <pubDate>Sun, 21 Sep 2025 15:44:48 +0800</pubDate>
+      
+      <guid>https://baiyunabe.github.io/tags/scanf/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>编程基础</title>
+      <link>https://baiyunabe.github.io/tags/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Sun, 21 Sep 2025 15:44:48 +0800</pubDate>
+      
+      <guid>https://baiyunabe.github.io/tags/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

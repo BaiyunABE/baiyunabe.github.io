@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Posts on Abe Blog</title>
+    <link>https://baiyunabe.github.io/posts/</link>
+    <description>Recent content in Posts on Abe Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 21 Sep 2025 15:44:48 +0800</lastBuildDate><atom:link href="https://baiyunabe.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>scanf函数在%d格式下的行为</title>
+      <link>https://baiyunabe.github.io/posts/scanf%E5%87%BD%E6%95%B0%E5%9C%A8d%E6%A0%BC%E5%BC%8F%E4%B8%8B%E7%9A%84%E8%A1%8C%E4%B8%BA/</link>
+      <pubDate>Sun, 21 Sep 2025 15:44:48 +0800</pubDate>
+      
+      <guid>https://baiyunabe.github.io/posts/scanf%E5%87%BD%E6%95%B0%E5%9C%A8d%E6%A0%BC%E5%BC%8F%E4%B8%8B%E7%9A%84%E8%A1%8C%E4%B8%BA/</guid>
+      <description>问题起源 大家都写过经典的猜数字游戏。某简单的猜数字游戏代码如下：
+#include &amp;lt;stdio.h&amp;gt;#include &amp;lt;stdlib.h&amp;gt; int main() { int number = rand() % 100 + 1; int guess; puts(&amp;#34;猜数字游戏（1-100）&amp;#34;); for (;;) { printf(&amp;#34;请输入你的猜测: &amp;#34;); scanf(&amp;#34;%d&amp;#34;, &amp;amp;guess); if (guess &amp;gt; number) { puts(&amp;#34;太大了！&amp;#34;); } else if (guess &amp;lt; number) { puts(&amp;#34;太小了！&amp;#34;); } else { puts(&amp;#34;恭喜你，猜对了！&amp;#34;); break; } } return 0; } 编译运行效果如下：
+$ ./main 猜数字游戏（1-100） 请输入你的猜测: 83 太小了！ 请输入你的猜测: 85 太大了！ 请输入你的猜测: 84 恭喜你，猜对了！ $ 可以看到，输入83，84，85时，程序行为符合预期。但如果输入2147483648（超过int类型的最大值 ）,程序的输出是这样：
+$ ./main 猜数字游戏（1-100） 请输入你的猜测: 2147483648 太小了！ 请输入你的猜测: 这就不符合预期了，逻辑上数字2147483648应大于1~100中的任何数，程序不应该输出&amp;quot;太小了！&amp;quot;。更糟糕的是，如果我们的输入不是数字，例如输入hello，程序的行为会是这样：</description>
+    </item>
+    
+  </channel>
+</rss>

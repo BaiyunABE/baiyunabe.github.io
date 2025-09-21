@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>scanf函数在%d格式下的行为 | Abe Blog</title>
+<meta name="keywords" content="C语言, 编程基础, scanf">
+<meta name="description" content="问题起源 大家都写过经典的猜数字游戏。某简单的猜数字游戏代码如下：
+#include &lt;stdio.h&gt;#include &lt;stdlib.h&gt; int main() { int number = rand() % 100 &#43; 1; int guess; puts(&#34;猜数字游戏（1-100）&#34;); for (;;) { printf(&#34;请输入你的猜测: &#34;); scanf(&#34;%d&#34;, &amp;guess); if (guess &gt; number) { puts(&#34;太大了！&#34;); } else if (guess &lt; number) { puts(&#34;太小了！&#34;); } else { puts(&#34;恭喜你，猜对了！&#34;); break; } } return 0; } 编译运行效果如下：
+$ ./main 猜数字游戏（1-100） 请输入你的猜测: 83 太小了！ 请输入你的猜测: 85 太大了！ 请输入你的猜测: 84 恭喜你，猜对了！ $ 可以看到，输入83，84，85时，程序行为符合预期。但如果输入2147483648（超过int类型的最大值 ）,程序的输出是这样：
+$ ./main 猜数字游戏（1-100） 请输入你的猜测: 2147483648 太小了！ 请输入你的猜测: 这就不符合预期了，逻辑上数字2147483648应大于1~100中的任何数，程序不应该输出&quot;太小了！&quot;。更糟糕的是，如果我们的输入不是数字，例如输入hello，程序的行为会是这样：">
+<meta name="author" content="">
+<link rel="canonical" href="https://baiyunabe.github.io/posts/scanf%E5%87%BD%E6%95%B0%E5%9C%A8d%E6%A0%BC%E5%BC%8F%E4%B8%8B%E7%9A%84%E8%A1%8C%E4%B8%BA/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.6a98292fb8fa8cf0f3ba4042d4b75515c04267550f3ad49ff6271b5af9562443.css" integrity="sha256-apgpL7j6jPDzukBC1LdVFcBCZ1UPOtSf9icbWvlWJEM=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://baiyunabe.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://baiyunabe.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://baiyunabe.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://baiyunabe.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://baiyunabe.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="scanf函数在%d格式下的行为" />
+<meta property="og:description" content="问题起源 大家都写过经典的猜数字游戏。某简单的猜数字游戏代码如下：
+#include &lt;stdio.h&gt;#include &lt;stdlib.h&gt; int main() { int number = rand() % 100 &#43; 1; int guess; puts(&#34;猜数字游戏（1-100）&#34;); for (;;) { printf(&#34;请输入你的猜测: &#34;); scanf(&#34;%d&#34;, &amp;guess); if (guess &gt; number) { puts(&#34;太大了！&#34;); } else if (guess &lt; number) { puts(&#34;太小了！&#34;); } else { puts(&#34;恭喜你，猜对了！&#34;); break; } } return 0; } 编译运行效果如下：
+$ ./main 猜数字游戏（1-100） 请输入你的猜测: 83 太小了！ 请输入你的猜测: 85 太大了！ 请输入你的猜测: 84 恭喜你，猜对了！ $ 可以看到，输入83，84，85时，程序行为符合预期。但如果输入2147483648（超过int类型的最大值 ）,程序的输出是这样：
+$ ./main 猜数字游戏（1-100） 请输入你的猜测: 2147483648 太小了！ 请输入你的猜测: 这就不符合预期了，逻辑上数字2147483648应大于1~100中的任何数，程序不应该输出&quot;太小了！&quot;。更糟糕的是，如果我们的输入不是数字，例如输入hello，程序的行为会是这样：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://baiyunabe.github.io/posts/scanf%E5%87%BD%E6%95%B0%E5%9C%A8d%E6%A0%BC%E5%BC%8F%E4%B8%8B%E7%9A%84%E8%A1%8C%E4%B8%BA/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2025-09-21T15:44:48+08:00" />
+<meta property="article:modified_time" content="2025-09-21T15:44:48+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="scanf函数在%d格式下的行为"/>
+<meta name="twitter:description" content="问题起源 大家都写过经典的猜数字游戏。某简单的猜数字游戏代码如下：
+#include &lt;stdio.h&gt;#include &lt;stdlib.h&gt; int main() { int number = rand() % 100 &#43; 1; int guess; puts(&#34;猜数字游戏（1-100）&#34;); for (;;) { printf(&#34;请输入你的猜测: &#34;); scanf(&#34;%d&#34;, &amp;guess); if (guess &gt; number) { puts(&#34;太大了！&#34;); } else if (guess &lt; number) { puts(&#34;太小了！&#34;); } else { puts(&#34;恭喜你，猜对了！&#34;); break; } } return 0; } 编译运行效果如下：
+$ ./main 猜数字游戏（1-100） 请输入你的猜测: 83 太小了！ 请输入你的猜测: 85 太大了！ 请输入你的猜测: 84 恭喜你，猜对了！ $ 可以看到，输入83，84，85时，程序行为符合预期。但如果输入2147483648（超过int类型的最大值 ）,程序的输出是这样：
+$ ./main 猜数字游戏（1-100） 请输入你的猜测: 2147483648 太小了！ 请输入你的猜测: 这就不符合预期了，逻辑上数字2147483648应大于1~100中的任何数，程序不应该输出&quot;太小了！&quot;。更糟糕的是，如果我们的输入不是数字，例如输入hello，程序的行为会是这样："/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://baiyunabe.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "scanf函数在%d格式下的行为",
+      "item": "https://baiyunabe.github.io/posts/scanf%E5%87%BD%E6%95%B0%E5%9C%A8d%E6%A0%BC%E5%BC%8F%E4%B8%8B%E7%9A%84%E8%A1%8C%E4%B8%BA/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "scanf函数在%d格式下的行为",
+  "name": "scanf函数在%d格式下的行为",
+  "description": "问题起源 大家都写过经典的猜数字游戏。某简单的猜数字游戏代码如下：\n#include \u0026lt;stdio.h\u0026gt;#include \u0026lt;stdlib.h\u0026gt; int main() { int number = rand() % 100 + 1; int guess; puts(\u0026#34;猜数字游戏（1-100）\u0026#34;); for (;;) { printf(\u0026#34;请输入你的猜测: \u0026#34;); scanf(\u0026#34;%d\u0026#34;, \u0026amp;guess); if (guess \u0026gt; number) { puts(\u0026#34;太大了！\u0026#34;); } else if (guess \u0026lt; number) { puts(\u0026#34;太小了！\u0026#34;); } else { puts(\u0026#34;恭喜你，猜对了！\u0026#34;); break; } } return 0; } 编译运行效果如下：\n$ ./main 猜数字游戏（1-100） 请输入你的猜测: 83 太小了！ 请输入你的猜测: 85 太大了！ 请输入你的猜测: 84 恭喜你，猜对了！ $ 可以看到，输入83，84，85时，程序行为符合预期。但如果输入2147483648（超过int类型的最大值 ）,程序的输出是这样：\n$ ./main 猜数字游戏（1-100） 请输入你的猜测: 2147483648 太小了！ 请输入你的猜测: 这就不符合预期了，逻辑上数字2147483648应大于1~100中的任何数，程序不应该输出\u0026quot;太小了！\u0026quot;。更糟糕的是，如果我们的输入不是数字，例如输入hello，程序的行为会是这样：",
+  "keywords": [
+    "C语言", "编程基础", "scanf"
+  ],
+  "articleBody": "问题起源 大家都写过经典的猜数字游戏。某简单的猜数字游戏代码如下：\n#include #include  int main() { int number = rand() % 100 + 1; int guess; puts(\"猜数字游戏（1-100）\"); for (;;) { printf(\"请输入你的猜测: \"); scanf(\"%d\", \u0026guess); if (guess  number) { puts(\"太大了！\"); } else if (guess  number) { puts(\"太小了！\"); } else { puts(\"恭喜你，猜对了！\"); break; } } return 0; } 编译运行效果如下：\n$ ./main 猜数字游戏（1-100） 请输入你的猜测: 83 太小了！ 请输入你的猜测: 85 太大了！ 请输入你的猜测: 84 恭喜你，猜对了！ $ 可以看到，输入83，84，85时，程序行为符合预期。但如果输入2147483648（超过int类型的最大值 ）,程序的输出是这样：\n$ ./main 猜数字游戏（1-100） 请输入你的猜测: 2147483648 太小了！ 请输入你的猜测: 这就不符合预期了，逻辑上数字2147483648应大于1~100中的任何数，程序不应该输出\"太小了！\"。更糟糕的是，如果我们的输入不是数字，例如输入hello，程序的行为会是这样：\n$ ./main 猜数字游戏（1-100） 请输入你的猜测: hello 太大了！ 请输入你的猜测: 太大了！ 请输入你的猜测: 太大了！ 请输入你的猜测: 太大了！ 请输入你的猜测: 太大了！ 请输入你的猜测: 太大了！ 请输入你的猜测: 太大了！ ... 程序输出\"太大了！\"后不再尝试读取用户的下一次猜测，而是循环输出\"请输入你的猜测: 太大了！\"。这些不符合逻辑的现象出现的原因都是什么呢？又该如何改进程序，使其能对上述输入作出正确的处理呢？\n实验探究 为了解决上述问题，我们必须更深入地了解scanf函数。scanf函数的函数声明如下：\nint scanf(const char *format, ...); 其中，format参数是格式字符串，在我们的示例中是\"%d\"；...表示可变数量参数，表明读取数据应存放的地址，在我们的示例中是\u0026guess。同时scanf函数有返回值，返回值类型为int。\n为了更好地使用scanf函数，我们探究scanf函数读取的数据和返回值与实际输入的关系。为此，我们设计测试程序如下：\n#include  int main() { int num = 42; printf(\"input: \"); int rv = scanf(\"0x%x\", \u0026num); printf(\" rv = %d\\n\", rv); printf(\"num = %d\\n\", num); return 0; } 编译运行效果如下：\n$ ./main input: 0x80000000 rv = 1 num = -2147483648 $ 对于不同的输入，程序会输出scanf函数读取的数据和返回值。为了便于观察，我们使用\"%x\"参数以输入16进制格式。在本实验中，该参数不会影响我们的结论。使用更多的输入，在64位机器上进行实验，并将结果总结成表格如下\n   序号 输入 rv num num的机器数     1 0x1 1 1 0x00000001   2 0x80000000 1 -2147483648 0x80000000   3 0xffffffff 1 -1 0xffffffff   4 0x100000000 1 0 0x00000000   5 0x100000001 1 1 0x00000001   6 0xfffffffffffffffe 1 -2 0xfffffffe   7 0xffffffffffffffff 1 -1 0xffffffff   8 0x10000000000000000 1 -1 0xffffffff   9 hello 0 42 0x0000002a    可以看到，当我们的输入不符合\"0x%x\"格式时，scanf将返回0，num为初始值（测试9）；当我们的输入符合格式，但超过64位计算机可表示的范围时，scanf将返回1，且num为-1（测试8）；当我们的输入在64位计算机可表示的范围内时，由于num是32位变量，scanf函数会将输入的低32位存入num中（测试1-7）。\n将scanf处理32位整型格式的逻辑编写成伪代码如下：\nif (输入符合格式) { if (输入在计算机可表示的范围内) { 将输入的低32位存入目标地址; } else { 将0xffffffff存入目标地址; } return 1; } else { return 0; } 原因分析 现在，我们能够解释猜数字程序中的问题了。\n当输入为2147483648时，scanf将读取2147483648的低32位，即0x80000000，并存入guess中；在32位有符号整型下，0x80000000是-2147483648的补码，故变量guess的值为-2147483648；由于-2147483648小于1-100中的任何数，故程序输出\"太小了！\"。\n当输入为hello时，scanf无法读取hello，故会将hello保留在输入缓冲区中并返回0；下一轮循环调用scanf时，由于hello仍在输入缓冲区中，scanf将再次读取失败并返回，而不会等待用户的下一次输入。\n解决方案 我们先解决第二种情形，即输入不符合格式的情形。解决方案是利用scanf的返回值，当检测到scanf返回0时，利用while循环将输入缓冲区清空，并提示用户重新输入。代码如下：\n#include #include  int main() { int number = rand() % 100 + 1; int guess; puts(\"猜数字游戏（1-100）\"); for (;;) { printf(\"请输入你的猜测: \"); if (scanf(\"%d\", \u0026guess) == 0) { char c; while ((c = getchar()) != EOF \u0026\u0026 c != '\\n'); puts(\"输入有误，请重新输入！\"); continue; } if (guess  number) { puts(\"太大了！\"); } else if (guess  number) { puts(\"太小了！\"); } else { puts(\"恭喜你，猜对了！\"); break; } } return 0; } 编译运行效果如下：\n$ ./main 猜数字游戏（1-100） 请输入你的猜测: hello 输入有误，请重新输入！ 请输入你的猜测: 84 恭喜你，猜对了！ $ 可以看到程序成功读取用户的下一次猜测，并作出正确判断。\n对于第一种情形，scanf返回值与合法情形相同，故无法通过返回值检测。\n当输入超过64位计算机可表示的范围时，guess的机器数一定为全1，而合理的猜测范围为1-100，故我们可以通过判断guess的机器数是否为全1来检测这种情况。\n当输入超过32位有符号整型表示的范围时，guess的值可能会落在合法区间内，故无法通过guess的值来检测该种情形。解决方法是将guess的类型改为64位整型，从而彻底规避这种情形出现。\n综上，最终代码如下：\n#include #include  int main() { long number = rand() % 100 + 1; long guess; puts(\"猜数字游戏（1-100）\"); for (;;) { printf(\"请输入你的猜测: \"); if (scanf(\"%ld\", \u0026guess) == 0) { char c; while ((c = getchar()) != EOF \u0026\u0026 c != '\\n'); puts(\"输入有误，请重新输入！\"); continue; } if (guess  1 || guess  100) { puts(\"请输入1-100内的整数！\"); continue; } if (guess  number) { puts(\"太大了！\"); } else if (guess  number) { puts(\"太小了！\"); } else { puts(\"恭喜你，猜对了！\"); break; } } return 0; } 编译运行效果如下：\n$ ./main 猜数字游戏（1-100） 请输入你的猜测: 2147483648 请输入1-100内的整数！ 请输入你的猜测: 99999999999999999999 请输入1-100内的整数！ 符合预期。\n",
+  "wordCount" : "396",
+  "inLanguage": "en",
+  "datePublished": "2025-09-21T15:44:48+08:00",
+  "dateModified": "2025-09-21T15:44:48+08:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://baiyunabe.github.io/posts/scanf%E5%87%BD%E6%95%B0%E5%9C%A8d%E6%A0%BC%E5%BC%8F%E4%B8%8B%E7%9A%84%E8%A1%8C%E4%B8%BA/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Abe Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://baiyunabe.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://baiyunabe.github.io/" accesskey="h" title="Abe Blog (Alt + H)">Abe Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      scanf函数在%d格式下的行为
+    </h1>
+    <div class="post-meta"><span title='2025-09-21 15:44:48 +0800 CST'>September 21, 2025</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="问题起源">问题起源<a hidden class="anchor" aria-hidden="true" href="#问题起源">#</a></h2>
+<p>大家都写过经典的猜数字游戏。某简单的猜数字游戏代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+  <span style="color:#66d9ef">int</span> number <span style="color:#f92672">=</span> rand() <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+  <span style="color:#66d9ef">int</span> guess;
+  
+  puts(<span style="color:#e6db74">&#34;猜数字游戏（1-100）&#34;</span>);
+  
+  <span style="color:#66d9ef">for</span> (;;) {
+    printf(<span style="color:#e6db74">&#34;请输入你的猜测: &#34;</span>);
+    scanf(<span style="color:#e6db74">&#34;%d&#34;</span>, <span style="color:#f92672">&amp;</span>guess);
+    
+    <span style="color:#66d9ef">if</span> (guess <span style="color:#f92672">&gt;</span> number) {
+      puts(<span style="color:#e6db74">&#34;太大了！&#34;</span>);
+    } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (guess <span style="color:#f92672">&lt;</span> number) {
+      puts(<span style="color:#e6db74">&#34;太小了！&#34;</span>);
+    } <span style="color:#66d9ef">else</span> {
+      puts(<span style="color:#e6db74">&#34;恭喜你，猜对了！&#34;</span>);
+      <span style="color:#66d9ef">break</span>;
+    }
+  }
+  
+  <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+}
+</code></pre></div><p>编译运行效果如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./main
+猜数字游戏（1-100）
+请输入你的猜测: <span style="color:#ae81ff">83</span>
+太小了！
+请输入你的猜测: <span style="color:#ae81ff">85</span>
+太大了！
+请输入你的猜测: <span style="color:#ae81ff">84</span>
+恭喜你，猜对了！
+$
+</code></pre></div><p>可以看到，输入<code>83</code>，<code>84</code>，<code>85</code>时，程序行为符合预期。但如果输入<code>2147483648</code>（超过<code>int</code>类型的最大值 ）,程序的输出是这样：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./main
+猜数字游戏（1-100）
+请输入你的猜测: <span style="color:#ae81ff">2147483648</span>
+太小了！
+请输入你的猜测: 
+</code></pre></div><p>这就不符合预期了，逻辑上数字2147483648应大于1~100中的任何数，程序不应该输出<code>&quot;太小了！&quot;</code>。更糟糕的是，如果我们的输入不是数字，例如输入<code>hello</code>，程序的行为会是这样：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./main
+猜数字游戏（1-100）
+请输入你的猜测: hello
+太大了！
+请输入你的猜测: 太大了！
+请输入你的猜测: 太大了！
+请输入你的猜测: 太大了！
+请输入你的猜测: 太大了！
+请输入你的猜测: 太大了！
+请输入你的猜测: 太大了！
+...
+</code></pre></div><p>程序输出<code>&quot;太大了！&quot;</code>后不再尝试读取用户的下一次猜测，而是循环输出<code>&quot;请输入你的猜测: 太大了！&quot;</code>。这些不符合逻辑的现象出现的原因都是什么呢？又该如何改进程序，使其能对上述输入作出正确的处理呢？</p>
+<h2 id="实验探究">实验探究<a hidden class="anchor" aria-hidden="true" href="#实验探究">#</a></h2>
+<p>为了解决上述问题，我们必须更深入地了解<code>scanf</code>函数。<code>scanf</code>函数的函数声明如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">scanf</span>(<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>format, ...);
+</code></pre></div><p>其中，<code>format</code>参数是格式字符串，在我们的示例中是<code>&quot;%d&quot;</code>；<code>...</code>表示可变数量参数，表明读取数据应存放的地址，在我们的示例中是<code>&amp;guess</code>。同时<code>scanf</code>函数有返回值，返回值类型为<code>int</code>。</p>
+<p>为了更好地使用<code>scanf</code>函数，我们探究<code>scanf</code>函数读取的数据和返回值与实际输入的关系。为此，我们设计测试程序如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+  <span style="color:#66d9ef">int</span> num <span style="color:#f92672">=</span> <span style="color:#ae81ff">42</span>;
+  printf(<span style="color:#e6db74">&#34;input: &#34;</span>);
+  <span style="color:#66d9ef">int</span> rv <span style="color:#f92672">=</span> scanf(<span style="color:#e6db74">&#34;0x%x&#34;</span>, <span style="color:#f92672">&amp;</span>num);
+  printf(<span style="color:#e6db74">&#34; rv = %d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, rv);
+  printf(<span style="color:#e6db74">&#34;num = %d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, num);
+  <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+}
+</code></pre></div><p>编译运行效果如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./main
+input: 0x80000000
+ rv <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+num <span style="color:#f92672">=</span> -2147483648
+$
+</code></pre></div><p>对于不同的输入，程序会输出<code>scanf</code>函数读取的数据和返回值。为了便于观察，我们使用<code>&quot;%x&quot;</code>参数以输入16进制格式。在本实验中，该参数不会影响我们的结论。使用更多的输入，在64位机器上进行实验，并将结果总结成表格如下</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">序号</th>
+<th style="text-align:right">输入</th>
+<th style="text-align:center">rv</th>
+<th style="text-align:right">num</th>
+<th style="text-align:left">num的机器数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:right"><code>0x1</code></td>
+<td style="text-align:center"><code>1</code></td>
+<td style="text-align:right"><code>1</code></td>
+<td style="text-align:left"><code>0x00000001</code></td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:right"><code>0x80000000</code></td>
+<td style="text-align:center"><code>1</code></td>
+<td style="text-align:right"><code>-2147483648</code></td>
+<td style="text-align:left"><code>0x80000000</code></td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:right"><code>0xffffffff</code></td>
+<td style="text-align:center"><code>1</code></td>
+<td style="text-align:right"><code>-1</code></td>
+<td style="text-align:left"><code>0xffffffff</code></td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:right"><code>0x100000000</code></td>
+<td style="text-align:center"><code>1</code></td>
+<td style="text-align:right"><code>0</code></td>
+<td style="text-align:left"><code>0x00000000</code></td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:right"><code>0x100000001</code></td>
+<td style="text-align:center"><code>1</code></td>
+<td style="text-align:right"><code>1</code></td>
+<td style="text-align:left"><code>0x00000001</code></td>
+</tr>
+<tr>
+<td style="text-align:center">6</td>
+<td style="text-align:right"><code>0xfffffffffffffffe</code></td>
+<td style="text-align:center"><code>1</code></td>
+<td style="text-align:right"><code>-2</code></td>
+<td style="text-align:left"><code>0xfffffffe</code></td>
+</tr>
+<tr>
+<td style="text-align:center">7</td>
+<td style="text-align:right"><code>0xffffffffffffffff</code></td>
+<td style="text-align:center"><code>1</code></td>
+<td style="text-align:right"><code>-1</code></td>
+<td style="text-align:left"><code>0xffffffff</code></td>
+</tr>
+<tr>
+<td style="text-align:center">8</td>
+<td style="text-align:right"><code>0x10000000000000000</code></td>
+<td style="text-align:center"><code>1</code></td>
+<td style="text-align:right"><code>-1</code></td>
+<td style="text-align:left"><code>0xffffffff</code></td>
+</tr>
+<tr>
+<td style="text-align:center">9</td>
+<td style="text-align:right"><code>hello</code></td>
+<td style="text-align:center"><code>0</code></td>
+<td style="text-align:right"><code>42</code></td>
+<td style="text-align:left"><code>0x0000002a</code></td>
+</tr>
+</tbody>
+</table>
+<p>可以看到，当我们的输入不符合<code>&quot;0x%x&quot;</code>格式时，<code>scanf</code>将返回<code>0</code>，<code>num</code>为初始值（测试9）；当我们的输入符合格式，但超过64位计算机可表示的范围时，<code>scanf</code>将返回<code>1</code>，且<code>num</code>为<code>-1</code>（测试8）；当我们的输入在64位计算机可表示的范围内时，由于<code>num</code>是32位变量，<code>scanf</code>函数会将输入的低32位存入<code>num</code>中（测试1-7）。</p>
+<p>将scanf处理32位整型格式的逻辑编写成伪代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">if (输入符合格式) {
+  if (输入在计算机可表示的范围内) {
+    将输入的低32位存入目标地址;
+  }
+  else {
+    将0xffffffff存入目标地址;
+  }
+  return 1;
+}
+else {
+  return 0;
+}
+</code></pre></div><h2 id="原因分析">原因分析<a hidden class="anchor" aria-hidden="true" href="#原因分析">#</a></h2>
+<p>现在，我们能够解释猜数字程序中的问题了。</p>
+<p>当输入为<code>2147483648</code>时，<code>scanf</code>将读取<code>2147483648</code>的低32位，即<code>0x80000000</code>，并存入<code>guess</code>中；在32位有符号整型下，<code>0x80000000</code>是<code>-2147483648</code>的补码，故变量<code>guess</code>的值为<code>-2147483648</code>；由于-2147483648小于1-100中的任何数，故程序输出<code>&quot;太小了！&quot;</code>。</p>
+<p>当输入为<code>hello</code>时，<code>scanf</code>无法读取<code>hello</code>，故会将<code>hello</code>保留在输入缓冲区中并返回<code>0</code>；下一轮循环调用<code>scanf</code>时，由于<code>hello</code>仍在输入缓冲区中，<code>scanf</code>将再次读取失败并返回，而不会等待用户的下一次输入。</p>
+<h2 id="解决方案">解决方案<a hidden class="anchor" aria-hidden="true" href="#解决方案">#</a></h2>
+<p>我们先解决第二种情形，即输入不符合格式的情形。解决方案是利用<code>scanf</code>的返回值，当检测到<code>scanf</code>返回<code>0</code>时，利用<code>while</code>循环将输入缓冲区清空，并提示用户重新输入。代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+  <span style="color:#66d9ef">int</span> number <span style="color:#f92672">=</span> rand() <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+  <span style="color:#66d9ef">int</span> guess;
+  
+  puts(<span style="color:#e6db74">&#34;猜数字游戏（1-100）&#34;</span>);
+  
+  <span style="color:#66d9ef">for</span> (;;) {
+    printf(<span style="color:#e6db74">&#34;请输入你的猜测: &#34;</span>);
+    
+    <span style="color:#66d9ef">if</span> (scanf(<span style="color:#e6db74">&#34;%d&#34;</span>, <span style="color:#f92672">&amp;</span>guess) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+      <span style="color:#66d9ef">char</span> c;
+      <span style="color:#66d9ef">while</span> ((c <span style="color:#f92672">=</span> getchar()) <span style="color:#f92672">!=</span> EOF <span style="color:#f92672">&amp;&amp;</span> c <span style="color:#f92672">!=</span> <span style="color:#e6db74">&#39;\n&#39;</span>);
+      puts(<span style="color:#e6db74">&#34;输入有误，请重新输入！&#34;</span>);
+      <span style="color:#66d9ef">continue</span>;
+    }
+    
+    <span style="color:#66d9ef">if</span> (guess <span style="color:#f92672">&gt;</span> number) {
+      puts(<span style="color:#e6db74">&#34;太大了！&#34;</span>);
+    } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (guess <span style="color:#f92672">&lt;</span> number) {
+      puts(<span style="color:#e6db74">&#34;太小了！&#34;</span>);
+    } <span style="color:#66d9ef">else</span> {
+      puts(<span style="color:#e6db74">&#34;恭喜你，猜对了！&#34;</span>);
+      <span style="color:#66d9ef">break</span>;
+    }
+  }
+  
+  <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+}
+</code></pre></div><p>编译运行效果如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./main
+猜数字游戏（1-100）
+请输入你的猜测: hello
+输入有误，请重新输入！
+请输入你的猜测: <span style="color:#ae81ff">84</span>
+恭喜你，猜对了！
+$
+</code></pre></div><p>可以看到程序成功读取用户的下一次猜测，并作出正确判断。</p>
+<p>对于第一种情形，<code>scanf</code>返回值与合法情形相同，故无法通过返回值检测。</p>
+<p>当输入超过64位计算机可表示的范围时，<code>guess</code>的机器数一定为全<code>1</code>，而合理的猜测范围为1-100，故我们可以通过判断<code>guess</code>的机器数是否为全<code>1</code>来检测这种情况。</p>
+<p>当输入超过32位有符号整型表示的范围时，<code>guess</code>的值可能会落在合法区间内，故无法通过<code>guess</code>的值来检测该种情形。解决方法是将<code>guess</code>的类型改为64位整型，从而彻底规避这种情形出现。</p>
+<p>综上，最终代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+  <span style="color:#66d9ef">long</span> number <span style="color:#f92672">=</span> rand() <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+  <span style="color:#66d9ef">long</span> guess;
+  
+  puts(<span style="color:#e6db74">&#34;猜数字游戏（1-100）&#34;</span>);
+  
+  <span style="color:#66d9ef">for</span> (;;) {
+    printf(<span style="color:#e6db74">&#34;请输入你的猜测: &#34;</span>);
+    
+    <span style="color:#66d9ef">if</span> (scanf(<span style="color:#e6db74">&#34;%ld&#34;</span>, <span style="color:#f92672">&amp;</span>guess) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+      <span style="color:#66d9ef">char</span> c;
+      <span style="color:#66d9ef">while</span> ((c <span style="color:#f92672">=</span> getchar()) <span style="color:#f92672">!=</span> EOF <span style="color:#f92672">&amp;&amp;</span> c <span style="color:#f92672">!=</span> <span style="color:#e6db74">&#39;\n&#39;</span>);
+      puts(<span style="color:#e6db74">&#34;输入有误，请重新输入！&#34;</span>);
+      <span style="color:#66d9ef">continue</span>;
+    }
+    
+    <span style="color:#66d9ef">if</span> (guess <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">||</span> guess <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">100</span>) {
+      puts(<span style="color:#e6db74">&#34;请输入1-100内的整数！&#34;</span>);
+      <span style="color:#66d9ef">continue</span>;
+    }
+    
+    <span style="color:#66d9ef">if</span> (guess <span style="color:#f92672">&gt;</span> number) {
+      puts(<span style="color:#e6db74">&#34;太大了！&#34;</span>);
+    } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (guess <span style="color:#f92672">&lt;</span> number) {
+      puts(<span style="color:#e6db74">&#34;太小了！&#34;</span>);
+    } <span style="color:#66d9ef">else</span> {
+      puts(<span style="color:#e6db74">&#34;恭喜你，猜对了！&#34;</span>);
+      <span style="color:#66d9ef">break</span>;
+    }
+  }
+  
+  <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+}
+</code></pre></div><p>编译运行效果如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./main
+猜数字游戏（1-100）
+请输入你的猜测: <span style="color:#ae81ff">2147483648</span> 
+请输入1-100内的整数！
+请输入你的猜测: <span style="color:#ae81ff">99999999999999999999</span>        
+请输入1-100内的整数！
+</code></pre></div><p>符合预期。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://baiyunabe.github.io/tags/c%E8%AF%AD%E8%A8%80/">C语言</a></li>
+      <li><a href="https://baiyunabe.github.io/tags/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/">编程基础</a></li>
+      <li><a href="https://baiyunabe.github.io/tags/scanf/">scanf</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2025 <a href="https://baiyunabe.github.io/">Abe Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
