@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>scanf函数在%d格式下的行为 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="问题起源大家都写过经典的猜数字游戏。某简单的猜数字游戏代码如下： 12345678910111213141516171819202122232425#include &lt;stdio.h&gt;#include &lt;stdlib.h&gt;int main() &#123;  int number &#x3D; rand() % 100 + 1;  int guess;    puts(&quot;猜">
+<meta property="og:type" content="article">
+<meta property="og:title" content="scanf函数在%d格式下的行为">
+<meta property="og:url" content="http://example.com/2025/09/21/scanf/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="问题起源大家都写过经典的猜数字游戏。某简单的猜数字游戏代码如下： 12345678910111213141516171819202122232425#include &lt;stdio.h&gt;#include &lt;stdlib.h&gt;int main() &#123;  int number &#x3D; rand() % 100 + 1;  int guess;    puts(&quot;猜">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-09-20T23:44:48.000Z">
+<meta property="article:modified_time" content="2025-09-22T01:24:28.920Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="C语言">
+<meta property="article:tag" content="scanf">
+<meta property="article:tag" content="编程基础">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-scanf" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/09/21/scanf/" class="article-date">
+  <time class="dt-published" datetime="2025-09-20T23:44:48.000Z" itemprop="datePublished">2025-09-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      scanf函数在%d格式下的行为
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="问题起源"><a href="#问题起源" class="headerlink" title="问题起源"></a>问题起源</h2><p>大家都写过经典的猜数字游戏。某简单的猜数字游戏代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">int</span> number = rand() % <span class="number">100</span> + <span class="number">1</span>;</span><br><span class="line">  <span class="type">int</span> guess;</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;猜数字游戏（1-100）&quot;</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;请输入你的猜测: &quot;</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;guess);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (guess &gt; number) &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;太大了！&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (guess &lt; number) &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;太小了！&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;恭喜你，猜对了！&quot;</span>);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译运行效果如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ ./main</span><br><span class="line">猜数字游戏（1-100）</span><br><span class="line">请输入你的猜测: 83</span><br><span class="line">太小了！</span><br><span class="line">请输入你的猜测: 85</span><br><span class="line">太大了！</span><br><span class="line">请输入你的猜测: 84</span><br><span class="line">恭喜你，猜对了！</span><br><span class="line">$</span><br></pre></td></tr></table></figure>
+<p>可以看到，输入<code>83</code>，<code>84</code>，<code>85</code>时，程序行为符合预期。但如果输入<code>2147483648</code>（超过<code>int</code>类型的最大值 ）,程序的输出是这样：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ./main</span><br><span class="line">猜数字游戏（1-100）</span><br><span class="line">请输入你的猜测: 2147483648</span><br><span class="line">太小了！</span><br><span class="line">请输入你的猜测: </span><br></pre></td></tr></table></figure>
+<p>这就不符合预期了，逻辑上数字2147483648应大于1~100中的任何数，程序不应该输出<code>&quot;太小了！&quot;</code>。更糟糕的是，如果我们的输入不是数字，例如输入<code>hello</code>，程序的行为会是这样：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ ./main</span><br><span class="line">猜数字游戏（1-100）</span><br><span class="line">请输入你的猜测: hello</span><br><span class="line">太大了！</span><br><span class="line">请输入你的猜测: 太大了！</span><br><span class="line">请输入你的猜测: 太大了！</span><br><span class="line">请输入你的猜测: 太大了！</span><br><span class="line">请输入你的猜测: 太大了！</span><br><span class="line">请输入你的猜测: 太大了！</span><br><span class="line">请输入你的猜测: 太大了！</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>程序输出<code>&quot;太大了！&quot;</code>后不再尝试读取用户的下一次猜测，而是循环输出<code>&quot;请输入你的猜测: 太大了！&quot;</code>。这些不符合逻辑的现象出现的原因都是什么呢？又该如何改进程序，使其能对上述输入作出正确的处理呢？</p>
+<h2 id="实验探究"><a href="#实验探究" class="headerlink" title="实验探究"></a>实验探究</h2><p>为了解决上述问题，我们必须更深入地了解<code>scanf</code>函数。<code>scanf</code>函数的函数声明如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">scanf</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *format, ...)</span>;</span><br></pre></td></tr></table></figure>
+<p>其中，<code>format</code>参数是格式字符串，在我们的示例中是<code>&quot;%d&quot;</code>；<code>...</code>表示可变数量参数，表明读取数据应存放的地址，在我们的示例中是<code>&amp;guess</code>。同时<code>scanf</code>函数有返回值，返回值类型为<code>int</code>。</p>
+<p>为了更好地使用<code>scanf</code>函数，我们探究<code>scanf</code>函数读取的数据和返回值与实际输入的关系。为此，我们设计测试程序如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">int</span> num = <span class="number">42</span>;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;input: &quot;</span>);</span><br><span class="line">  <span class="type">int</span> rv = <span class="built_in">scanf</span>(<span class="string">&quot;0x%x&quot;</span>, &amp;num);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot; rv = %d\n&quot;</span>, rv);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;num = %d\n&quot;</span>, num);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译运行效果如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ./main</span><br><span class="line">input: 0x80000000</span><br><span class="line"> rv = 1</span><br><span class="line">num = -2147483648</span><br><span class="line">$</span><br></pre></td></tr></table></figure>
+<p>对于不同的输入，程序会输出<code>scanf</code>函数读取的数据和返回值。为了便于观察，我们使用<code>&quot;%x&quot;</code>参数以输入16进制格式。在本实验中，该参数不会影响我们的结论。使用更多的输入，在64位机器上进行实验，并将结果总结成表格如下</p>
+<table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="right">输入</th>
+<th align="center">rv</th>
+<th align="right">num</th>
+<th align="left">num的机器数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="right"><code>0x1</code></td>
+<td align="center"><code>1</code></td>
+<td align="right"><code>1</code></td>
+<td align="left"><code>0x00000001</code></td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="right"><code>0x80000000</code></td>
+<td align="center"><code>1</code></td>
+<td align="right"><code>-2147483648</code></td>
+<td align="left"><code>0x80000000</code></td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="right"><code>0xffffffff</code></td>
+<td align="center"><code>1</code></td>
+<td align="right"><code>-1</code></td>
+<td align="left"><code>0xffffffff</code></td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="right"><code>0x100000000</code></td>
+<td align="center"><code>1</code></td>
+<td align="right"><code>0</code></td>
+<td align="left"><code>0x00000000</code></td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="right"><code>0x100000001</code></td>
+<td align="center"><code>1</code></td>
+<td align="right"><code>1</code></td>
+<td align="left"><code>0x00000001</code></td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="right"><code>0xfffffffffffffffe</code></td>
+<td align="center"><code>1</code></td>
+<td align="right"><code>-2</code></td>
+<td align="left"><code>0xfffffffe</code></td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="right"><code>0xffffffffffffffff</code></td>
+<td align="center"><code>1</code></td>
+<td align="right"><code>-1</code></td>
+<td align="left"><code>0xffffffff</code></td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td align="right"><code>0x10000000000000000</code></td>
+<td align="center"><code>1</code></td>
+<td align="right"><code>-1</code></td>
+<td align="left"><code>0xffffffff</code></td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td align="right"><code>hello</code></td>
+<td align="center"><code>0</code></td>
+<td align="right"><code>42</code></td>
+<td align="left"><code>0x0000002a</code></td>
+</tr>
+</tbody></table>
+<p>可以看到，当我们的输入不符合<code>&quot;0x%x&quot;</code>格式时，<code>scanf</code>将返回<code>0</code>，<code>num</code>为初始值（测试9）；当我们的输入符合格式，但超过64位计算机可表示的范围时，<code>scanf</code>将返回<code>1</code>，且<code>num</code>为<code>-1</code>（测试8）；当我们的输入在64位计算机可表示的范围内时，由于<code>num</code>是32位变量，<code>scanf</code>函数会将输入的低32位存入<code>num</code>中（测试1-7）。</p>
+<p>将scanf处理32位整型格式的逻辑编写成伪代码如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">if (输入符合格式) &#123;</span><br><span class="line">  if (输入在计算机可表示的范围内) &#123;</span><br><span class="line">    将输入的低32位存入目标地址;</span><br><span class="line">  &#125;</span><br><span class="line">  else &#123;</span><br><span class="line">    将0xffffffff存入目标地址;</span><br><span class="line">  &#125;</span><br><span class="line">  return 1;</span><br><span class="line">&#125;</span><br><span class="line">else &#123;</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>现在，我们能够解释猜数字程序中的问题了。</p>
+<p>当输入为<code>2147483648</code>时，<code>scanf</code>将读取<code>2147483648</code>的低32位，即<code>0x80000000</code>，并存入<code>guess</code>中；在32位有符号整型下，<code>0x80000000</code>是<code>-2147483648</code>的补码，故变量<code>guess</code>的值为<code>-2147483648</code>；由于-2147483648小于1-100中的任何数，故程序输出<code>&quot;太小了！&quot;</code>。</p>
+<p>当输入为<code>hello</code>时，<code>scanf</code>无法读取<code>hello</code>，故会将<code>hello</code>保留在输入缓冲区中并返回<code>0</code>；下一轮循环调用<code>scanf</code>时，由于<code>hello</code>仍在输入缓冲区中，<code>scanf</code>将再次读取失败并返回，而不会等待用户的下一次输入。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>我们先解决第二种情形，即输入不符合格式的情形。解决方案是利用<code>scanf</code>的返回值，当检测到<code>scanf</code>返回<code>0</code>时，利用<code>while</code>循环将输入缓冲区清空，并提示用户重新输入。代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">int</span> number = rand() % <span class="number">100</span> + <span class="number">1</span>;</span><br><span class="line">  <span class="type">int</span> guess;</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;猜数字游戏（1-100）&quot;</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;请输入你的猜测: &quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;guess) == <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="type">char</span> c;</span><br><span class="line">      <span class="keyword">while</span> ((c = getchar()) != EOF &amp;&amp; c != <span class="string">&#x27;\n&#x27;</span>);</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;输入有误，请重新输入！&quot;</span>);</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (guess &gt; number) &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;太大了！&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (guess &lt; number) &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;太小了！&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;恭喜你，猜对了！&quot;</span>);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译运行效果如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ ./main</span><br><span class="line">猜数字游戏（1-100）</span><br><span class="line">请输入你的猜测: hello</span><br><span class="line">输入有误，请重新输入！</span><br><span class="line">请输入你的猜测: 84</span><br><span class="line">恭喜你，猜对了！</span><br><span class="line">$</span><br></pre></td></tr></table></figure>
+<p>可以看到程序成功读取用户的下一次猜测，并作出正确判断。</p>
+<p>对于第一种情形，<code>scanf</code>返回值与合法情形相同，故无法通过返回值检测。</p>
+<p>当输入超过64位计算机可表示的范围时，<code>guess</code>的机器数一定为全<code>1</code>，而合理的猜测范围为1-100，故我们可以通过判断<code>guess</code>的机器数是否为全<code>1</code>来检测这种情况。</p>
+<p>当输入超过32位有符号整型表示的范围时，<code>guess</code>的值可能会落在合法区间内，故无法通过<code>guess</code>的值来检测该种情形。解决方法是将<code>guess</code>的类型改为64位整型，从而彻底规避这种情形出现。</p>
+<p>综上，最终代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">long</span> number = rand() % <span class="number">100</span> + <span class="number">1</span>;</span><br><span class="line">  <span class="type">long</span> guess;</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;猜数字游戏（1-100）&quot;</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;请输入你的猜测: &quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">scanf</span>(<span class="string">&quot;%ld&quot;</span>, &amp;guess) == <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="type">char</span> c;</span><br><span class="line">      <span class="keyword">while</span> ((c = getchar()) != EOF &amp;&amp; c != <span class="string">&#x27;\n&#x27;</span>);</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;输入有误，请重新输入！&quot;</span>);</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (guess &lt; <span class="number">1</span> || guess &gt; <span class="number">100</span>) &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;请输入1-100内的整数！&quot;</span>);</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (guess &gt; number) &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;太大了！&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (guess &lt; number) &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;太小了！&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;恭喜你，猜对了！&quot;</span>);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译运行效果如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ ./main</span><br><span class="line">猜数字游戏（1-100）</span><br><span class="line">请输入你的猜测: 2147483648 </span><br><span class="line">请输入1-100内的整数！</span><br><span class="line">请输入你的猜测: 99999999999999999999        </span><br><span class="line">请输入1-100内的整数！</span><br></pre></td></tr></table></figure>
+<p>符合预期。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>本文明确了<code>scanf</code>在<code>%d</code>格式下的行为，并对整数溢出和格式错误两个问题给出了解决方案。对异常输入的正确处理是构建健壮系统的关键，而能够发现并正确处理异常输入，需要我们足够了解我们所使用的编程语言乃至计算机的底层机制。通过设计合理的测试并进行实验，我们能够加深对编程语言与计算机的了解，从而更好地使用它们。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2025/09/21/scanf/" data-id="cuidpsvW8rfUbBz-Jm7MQdaNt" data-title="scanf函数在%d格式下的行为" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scanf/" rel="tag">scanf</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" rel="tag">编程基础</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/05/23/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Hello World
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scanf/" rel="tag">scanf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" rel="tag">编程基础</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 10px;">C语言</a> <a href="/tags/scanf/" style="font-size: 10px;">scanf</a> <a href="/tags/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" style="font-size: 10px;">编程基础</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">May 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/23/Hello-Hexo/">Hello Hexo</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/23/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2025/09/21/scanf/">scanf函数在%d格式下的行为</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
