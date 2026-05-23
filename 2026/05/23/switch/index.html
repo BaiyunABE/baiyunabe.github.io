@@ -1,0 +1,1708 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>现代交换原理 | Abe's Blog</title><meta name="author" content="Abe"><meta name="copyright" content="Abe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="交换概论交换与通信网无交换的多点间电话通信  需全互连方式两两相连 若终端数为$N$，则线对数为$C_N^2&#x3D;\frac{N(N-1)}{2}$   每个终端需配置一个多路选择开关 增加第$N+1$个终端操作复杂 增加$N$对线路 更换所有多路选择开关    交换：在通信网上，负责在通信源点和目的点之间建立通信通道，并传送通信信息的机制。 通信网的三要素  交换设备 传输设备 用户线 中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="现代交换原理">
+<meta property="og:url" content="http://baiyunabe.github.io/2026/05/23/switch/index.html">
+<meta property="og:site_name" content="Abe&#39;s Blog">
+<meta property="og:description" content="交换概论交换与通信网无交换的多点间电话通信  需全互连方式两两相连 若终端数为$N$，则线对数为$C_N^2&#x3D;\frac{N(N-1)}{2}$   每个终端需配置一个多路选择开关 增加第$N+1$个终端操作复杂 增加$N$对线路 更换所有多路选择开关    交换：在通信网上，负责在通信源点和目的点之间建立通信通道，并传送通信信息的机制。 通信网的三要素  交换设备 传输设备 用户线 中">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://baiyunabe.github.io/images/avatar.jpg">
+<meta property="article:published_time" content="2026-05-23T01:07:48.000Z">
+<meta property="article:modified_time" content="2026-05-23T09:10:30.984Z">
+<meta property="article:author" content="Abe">
+<meta property="article:tag" content="交换原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://baiyunabe.github.io/images/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "现代交换原理",
+  "url": "http://baiyunabe.github.io/2026/05/23/switch/",
+  "image": "http://baiyunabe.github.io/images/avatar.jpg",
+  "datePublished": "2026-05-23T01:07:48.000Z",
+  "dateModified": "2026-05-23T09:10:30.984Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Abe",
+      "url": "http://baiyunabe.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://baiyunabe.github.io/2026/05/23/switch/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.5-b1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '现代交换原理',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script><meta name="generator" content="Hexo 8.1.2"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Abe's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">现代交换原理</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  Back to Home</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">现代交换原理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2026-05-23T01:07:48.000Z" title="Created 2026-05-23 09:07:48">2026-05-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2026-05-23T09:10:30.984Z" title="Updated 2026-05-23 17:10:30">2026-05-23</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="交换概论"><a href="#交换概论" class="headerlink" title="交换概论"></a>交换概论</h2><h3 id="交换与通信网"><a href="#交换与通信网" class="headerlink" title="交换与通信网"></a>交换与通信网</h3><p>无交换的多点间电话通信</p>
+<ul>
+<li>需全互连方式两两相连<ul>
+<li>若终端数为$N$，则线对数为$C_N^2&#x3D;\frac{N(N-1)}{2}$</li>
+</ul>
+</li>
+<li>每个终端需配置一个多路选择开关</li>
+<li>增加第$N+1$个终端操作复杂<ul>
+<li>增加$N$对线路</li>
+<li>更换所有多路选择开关</li>
+</ul>
+</li>
+</ul>
+<p>交换：在通信网上，负责在通信源点和目的点之间建立通信通道，并传送通信信息的机制。</p>
+<p>通信网的三要素</p>
+<ul>
+<li>交换设备</li>
+<li>传输设备<ul>
+<li>用户线</li>
+<li>中继线</li>
+</ul>
+</li>
+<li>终端设备</li>
+</ul>
+<p>通信网的分层结构</p>
+<ul>
+<li><p>应用层</p>
+</li>
+<li><p>业务层</p>
+</li>
+<li><p>传送层</p>
+</li>
+<li><p>支撑网</p>
+</li>
+</ul>
+<p>通信的基本问题</p>
+<ul>
+<li>编码：用什么信息格式传递给对方</li>
+<li>寻址：如何找到对方</li>
+<li>信息传递的额外要求<ul>
+<li>网络结构</li>
+<li><strong>带宽</strong></li>
+<li><strong>复用</strong></li>
+<li><strong>连接方式</strong></li>
+<li>安全</li>
+<li>服务质量</li>
+</ul>
+</li>
+</ul>
+<p>通信的三对基本概念</p>
+<ul>
+<li>信息传送<ul>
+<li>面向连接工作方式：连接建立、信息传送、连接释放<ul>
+<li>物理连接</li>
+<li>逻辑连接</li>
+</ul>
+</li>
+<li>无连接工作方式：边选路（寻址），边传递信息</li>
+</ul>
+</li>
+<li>时分复用<ul>
+<li>同步时分复用<ul>
+<li>位置化信道：依据信号在时间轴上的位置来区别每一路信号（逻辑信道），无信息传送时也占用信道</li>
+<li>子信道信息流速率恒定，每帧一个定长数据</li>
+</ul>
+</li>
+<li>统计（异步）时分复用<ul>
+<li>标志化信道：标志码标识哪路信息，与时间位置无关</li>
+<li>分组长度可变或固定，分组头起定界作用</li>
+<li>统计复用提高信道利用率</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>带宽分配<ul>
+<li>固定带宽分配</li>
+<li>动态带宽分配</li>
+</ul>
+</li>
+</ul>
+<h3 id="交换方式"><a href="#交换方式" class="headerlink" title="交换方式"></a>交换方式</h3><h4 id="电路交换"><a href="#电路交换" class="headerlink" title="电路交换"></a>电路交换</h4><p>电路交换特点</p>
+<ul>
+<li>面向连接的工作方式（物理连接）</li>
+<li>同步时分复用（固定带宽分配）</li>
+<li>无差错控制机制</li>
+<li>对通信信息不作处理（透明传输）</li>
+<li>流量控制基于呼叫损失制</li>
+</ul>
+<p>适合实时、恒定速率的话音业务，例如电话通信网（Public Switched Telephone Network，PSTN）</p>
+<h4 id="多速率电路交换"><a href="#多速率电路交换" class="headerlink" title="多速率电路交换"></a>多速率电路交换</h4><p>将几个基本信道速率捆绑起来，构成一个速率更高的信道，即确定基本信道速率，按需形成其它速率，且其它速率是基本速率的<strong>整数倍</strong> </p>
+<p>问题一：确定基本速率</p>
+<ul>
+<li>太低：难以实现高速业务</li>
+<li>太高：低速业务造成带宽浪费</li>
+</ul>
+<p>问题二：保证时隙顺序完整性</p>
+<p>特点：软件实现，控制软件复杂</p>
+<p>应用：ISDN多速率承载业务</p>
+<h4 id="分组交换"><a href="#分组交换" class="headerlink" title="分组交换"></a>分组交换</h4><p>典型应用：公用电报网的电报自动交换</p>
+<p>分组头：选路信息及其它控制信息</p>
+<p>分组大小：可变长、长度（兼顾时延和开销）</p>
+<p>分组交换两种方式</p>
+<ul>
+<li>虚电路（Virtual Circuit，VC）<ul>
+<li>面向连接的工作方式，逻辑连接</li>
+<li>应用：Packet Switched Public Data Network，PSPDN</li>
+</ul>
+</li>
+<li>数据报（Datagram，DG）<ul>
+<li>路由选择和数据转发同时进行</li>
+<li>典型应用：IP网络</li>
+</ul>
+</li>
+</ul>
+<p>分组交换特点</p>
+<ul>
+<li>面向连接方式（逻辑连接）和无连接方式</li>
+<li>统计时分复用（动态分配带宽）</li>
+<li>有差错控制机制</li>
+<li>对通信信息作处理</li>
+<li>流量控制基于呼叫延迟制</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>虚电路</th>
+<th>数据报</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>分组头</td>
+<td>简单（逻辑信道号）</td>
+<td>复杂（详细的选路信息）</td>
+</tr>
+<tr>
+<td>选路</td>
+<td>基于虚连接表</td>
+<td>每个分组独立选路，选路复杂</td>
+</tr>
+<tr>
+<td>分组顺序</td>
+<td>不会失序</td>
+<td>失序现象</td>
+</tr>
+<tr>
+<td>故障敏感性</td>
+<td>敏感</td>
+<td>不敏感（可靠性高）</td>
+</tr>
+<tr>
+<td>应用</td>
+<td>连续数据流</td>
+<td>询问&#x2F;相应</td>
+</tr>
+</tbody></table>
+<p>适合可靠性要求高、可变速率的数据业务，例如数据通信网</p>
+<h4 id="帧中继"><a href="#帧中继" class="headerlink" title="帧中继"></a>帧中继</h4><p>帧中继协议简化的前提</p>
+<ul>
+<li>高度可靠的光纤系统，无需链路层复杂的流量控制和差错控制功能</li>
+<li>终端系统日益智能化，具备以端到端方式进行差错控制的能力</li>
+</ul>
+<p>典型应用：LAN互联</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>CTM</th>
+<th>PTM</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>信息损伤</td>
+<td>时间透明性</td>
+<td>语义透明性</td>
+</tr>
+<tr>
+<td>支持多种业务</td>
+<td></td>
+<td>灵活性高，可实现多速率交换，允许多种业务共享网络资源</td>
+</tr>
+<tr>
+<td>设备复杂性</td>
+<td>需要复杂路由选择算法</td>
+<td>需要复杂队列管理机制</td>
+</tr>
+</tbody></table>
+<h4 id="ATM交换（Asynchronous-Transfer-Mode）"><a href="#ATM交换（Asynchronous-Transfer-Mode）" class="headerlink" title="ATM交换（Asynchronous Transfer Mode）"></a>ATM交换（Asynchronous Transfer Mode）</h4><p>ATM交换特点</p>
+<ul>
+<li><p>以分组传送模式为基础并融合了电路传送模式高速化的优点</p>
+<ul>
+<li><p>固定长度的信元</p>
+<ul>
+<li>短信元可以减少交换节点内部的缓冲器容量以及排队时延和时延抖动</li>
+<li>信元的长度固定，可用硬件实现交换，有利于简化交换控制和缓冲器管理</li>
+</ul>
+</li>
+<li><p>面向连接的工作方式</p>
+</li>
+<li><p>异步时分复用</p>
+<ul>
+<li><p>有一个表明属于哪路逻辑信道的标记(VPI&#x2F;VCI)</p>
+</li>
+<li><p>通过标记来区分每一个逻辑信道</p>
+</li>
+</ul>
+</li>
+<li><p>动态分配带宽</p>
+</li>
+</ul>
+</li>
+<li><p>简化了分组通信中的协议，并由硬件对简化的协议进行处理，交换节点不再对信息进行流量控制和差错控制，极大提高了网络传输处理能力</p>
+</li>
+</ul>
+<h3 id="交换系统"><a href="#交换系统" class="headerlink" title="交换系统"></a>交换系统</h3><p>交换系统基本结构</p>
+<ul>
+<li><p>信息传送子系统</p>
+<ul>
+<li>交换网络</li>
+<li>接口<ul>
+<li>用户侧接口</li>
+<li>网络侧接口</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>控制子系统</p>
+<ul>
+<li>控制系统</li>
+</ul>
+<p>交换系统基本技术</p>
+</li>
+<li><p>互连技术</p>
+<ul>
+<li>交换网络的拓扑结构</li>
+<li>选路策略</li>
+<li>控制机理</li>
+<li>多播方式</li>
+<li>阻塞特性</li>
+<li>故障防卫</li>
+</ul>
+</li>
+<li><p>接口技术</p>
+<ul>
+<li>用户侧接口</li>
+<li>系统侧接口</li>
+</ul>
+</li>
+<li><p>信令或协议技术</p>
+<ul>
+<li>信令<ul>
+<li>信令是呼叫接续过程中所采用的一种“通信语言”，用于协调动作、控制呼叫。这种“通信语言”应该是可相互理解的、相互约定的、以达到协调动作为目的的。</li>
+<li>信令是通信网中规范化的控制命令，它是控制交换机产生动作的命令，它的作用是控制通信网中各种通信连接的建立和拆除，并维护通信网的正常运行。</li>
+</ul>
+</li>
+<li>协议<ul>
+<li>在计算机网络中，为了使计算机或终端之间能够正确地传递信息，必须有一整套关于信息传输顺序、格式和信息内容等的约定，这一整套约定称为协议（protocol）。</li>
+<li>一个完整的协议应具有以下5个基本要素<ul>
+<li>协议所提供的服务</li>
+<li>对协议运行环境所进行的假设</li>
+<li>用来实现协议的词汇</li>
+<li>词汇中每个消息的编码</li>
+<li>用来控制消息一致性的过程规则</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>协议属于信令</li>
+</ul>
+</li>
+<li><p>控制技术</p>
+<ul>
+<li>控制系统的结构方式<ul>
+<li>集中控制<ul>
+<li>处理机间通信接口简单</li>
+<li>单个处理机上的应用软件复杂、庞大、</li>
+<li>系统可靠性较低（单机系统）</li>
+</ul>
+</li>
+<li>分散控制<ul>
+<li>分级分散控制</li>
+<li>全分散控制<ul>
+<li>各处理机处于同一级别</li>
+<li>各处理机之间通信接口较复杂</li>
+<li>单个处理机上的应用软件相对简单</li>
+<li>系统可靠性比较高</li>
+<li>系统具有较好的扩充能力</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>处理机间的通信方式</li>
+<li>多处理机结构</li>
+</ul>
+</li>
+</ul>
+<h2 id="交换网络"><a href="#交换网络" class="headerlink" title="交换网络"></a>交换网络</h2><h3 id="交换网络构成"><a href="#交换网络构成" class="headerlink" title="交换网络构成"></a>交换网络构成</h3><p><strong>交换</strong>：在任意的入线和出线之间建立连接</p>
+<p><strong>交换单元</strong>：构成交换网络的最基本的部件</p>
+<p><strong>交换网络</strong>：由若干个<strong>交换单元</strong>按照一定的<strong>拓扑结构</strong>和<strong>控制方式</strong>构成</p>
+<h3 id="交换单元"><a href="#交换单元" class="headerlink" title="交换单元"></a>交换单元</h3><h4 id="交换单元基本概念"><a href="#交换单元基本概念" class="headerlink" title="交换单元基本概念"></a>交换单元基本概念</h4><p>$M\times{N}$交换单元</p>
+<ul>
+<li>入线（$0\dots{M-1}$）</li>
+<li>出线（$0\dots{N-1}$）</li>
+<li>控制端</li>
+<li>状态端</li>
+</ul>
+<p>交换单元的分类</p>
+<ul>
+<li><p>按入出线的信息传送方向</p>
+<ul>
+<li>有向交换单元：当信息经过交换单元时只能从入线进、出线出，具有唯一确定的方向。</li>
+<li>无向交换单元：交换单元的每条线即可入也可出。<ul>
+<li>$N$无向交换单元</li>
+<li>$K\times{L}$无向交换单元（$N&#x3D;K+L$）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>按入出线的数量关系</p>
+<ul>
+<li>集中型（$M&gt;N$）</li>
+<li>扩散型（$M&lt;N$）</li>
+<li>连接型（$M&#x3D;N$）</li>
+</ul>
+</li>
+<li><p>按入出线之间是否共享单一通路</p>
+<ul>
+<li>空分交换单元<ul>
+<li>开关阵列</li>
+<li>空间接线器</li>
+</ul>
+</li>
+<li>时分交换单元<ul>
+<li>共享存储器</li>
+<li>共享总线</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>按交换单元所接收的信号</p>
+<ul>
+<li>模拟交换单元</li>
+<li>数字交换单元</li>
+</ul>
+<p>交换单元的连接特性</p>
+</li>
+<li><p>交换单元连接特性的描述方式</p>
+<ul>
+<li>集合描述方式：所有入线序号为集合$T$，出线序号为集合$R$。连接$c&#x3D;\set{t,R_t}$，$t\in{T}$，$R_t\in{R}$</li>
+<li>函数描述方式：$f:t\mapsto{R_t}$，$R_t\in{R}$<ul>
+<li>排列：$\pmatrix{t_1&amp;t_2&amp;\dots&amp;t_n\r_1&amp;r_2&amp;\dots&amp;r_n}$，入线排列表达式：$(0,1,2,\dots,N-2,N-1)$</li>
+<li>图形：略</li>
+<li>二进制函数：$E(x_{n-1}x_{n-2}{\dots}x_1x_0)$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>常见交换单元的连接方式（定义$\pi_\sigma:T\to{R}$满足$(\pi_\sigma(x))<em>i&#x3D;x</em>{\sigma(i)}$）</p>
+<ul>
+<li>直接连接：$I(x_{n-1}x_{n-2}{\cdots}x_1x_0)&#x3D;x_{n-1}x_{n-2}{\cdots}x_1x_0$</li>
+<li>交叉连接：$E(x_{n-1}x_{n-2}{\cdots}x_1x_0)&#x3D;x_{n-1}x_{n-2}{\cdots}x_1\overline{x_0}$</li>
+<li>蝶式连接：$\beta&#x3D;\pi_{\pmatrix{0&amp;n-1}}$<ul>
+<li>子蝶式连接：$\beta_{(k)}&#x3D;\pi_{\pmatrix{0&amp;k}}$</li>
+<li>超蝶式连接：$\beta^{(k)}&#x3D;\pi_{\pmatrix{k&amp;n-k-1}}$</li>
+</ul>
+</li>
+<li>均匀洗牌连接：$\delta&#x3D;\pi_{\pmatrix{n-1&amp;n-2&amp;\cdots&amp;1&amp;0}}$<ul>
+<li>子洗牌连接：$\delta_{(k)}&#x3D;\pi_{\pmatrix{k&amp;k-1&amp;\cdots&amp;1&amp;0}}$</li>
+<li>超洗牌连接：$\delta^{(k)}&#x3D;\pi_{\pmatrix{n-1&amp;n-2&amp;\cdots&amp;n-k&amp;n-k-1}}$</li>
+</ul>
+</li>
+<li>间隔交叉连接：$C_k(x_{n-1}x_{n-2}{\cdots}x_{k+1}{x_k}x_{k-1}{\cdots}x_1x_0)&#x3D;x_{n-1}x_{n-2}{\cdots}x_{k+1}\overline{x_k}x_{k-1}{\cdots}x_1x_0$</li>
+</ul>
+</li>
+</ul>
+<p>交换单元的性能</p>
+<ul>
+<li>容量：交换单元所有入线可以同时送入的总的信息量</li>
+<li>接口：交换单元需要规定自己的信号接口标准，即信号形式、速率及信息流方向</li>
+<li>功能：点到点、点到多点</li>
+<li>质量：完成交换动作的速度、任何情况下是否能完成指定连接、信息经过交换单元是否有损伤（时间、语义）</li>
+</ul>
+<h4 id="空分交换单元"><a href="#空分交换单元" class="headerlink" title="空分交换单元"></a>空分交换单元</h4><p>在交换单元内部，要建立任意入线和任意出线之间的连接，就在每条入线和每条出线之间都各自接上一个开关，所有开关就构成了交换单元内部的开关阵列。</p>
+<ul>
+<li>开关的位置：入、出线交叉点</li>
+<li>开关的表示：$K_{ij}$（$i$为入线，$j$为出线）</li>
+<li>开关的状态：通、断</li>
+<li>开关的种类：单向、双向</li>
+</ul>
+<p>交换单元的开关阵列实现</p>
+<ul>
+<li>$M{\times}N$有向交换单元开关阵列实现，使用有向开关：$M&#x3D;(1)_{M{\times}N}$</li>
+<li>$N$无向交换单元开关阵列实现，使用无向开关：$M&#x3D;\pmatrix{0&amp;1&amp;\cdots&amp;1\&amp;0&amp;\ddots&amp;1\&amp;&amp;\ddots&amp;\vdots\&amp;&amp;&amp;0}$</li>
+<li>$N$无向交换单元开关阵列实现，使用有向开关：$M&#x3D;\pmatrix{0&amp;1&amp;\cdots&amp;1\1&amp;0&amp;\ddots&amp;1\\vdots&amp;\ddots&amp;\ddots&amp;\vdots\1&amp;1&amp;\cdots&amp;0}$</li>
+<li>$K{\times}L$无向交换单元开关阵列实现，使用无向开关：$M&#x3D;(1)_{K{\times}L}$</li>
+<li>$K{\times}L$无向交换单元开关阵列实现，使用有向开关：$M&#x3D;\pmatrix{O_{K{\times}K}&amp;(1)<em>{K{\times}L}\(1)</em>{L{\times}K}&amp;O_{L{\times}L}}$</li>
+</ul>
+<p>开关阵列的特性</p>
+<ul>
+<li>容易实现广播功能</li>
+<li>从入线到出线延迟时间均等</li>
+<li>控制信号简单</li>
+<li>交换单元性能依赖于所使用的开关</li>
+<li>适于构成较小的交换单元（开关数反映实现复杂度和成本高低）</li>
+</ul>
+<p>实际的开关阵列</p>
+<ul>
+<li><strong>继电器</strong>：其构成的交换单元是无向的，可交换模拟和数字信息，干扰和噪声大、动作慢（ms级）、体积大（cm级）</li>
+<li><strong>模拟电子开关</strong>：一般利用半导体材料制成。如：MC142100、MC145100（$4{\times}4$开关阵列）只能单向传送，且衰耗和时延较大。</li>
+<li><strong>数字电子开关</strong>：由简单的逻辑门构成，用于数字信号的交换，开关动作极快且无信号损失。</li>
+</ul>
+<p>空间交换单元也称为空间接线器（Space Switch），简称为S单元或S接线器</p>
+<ul>
+<li><p>构成</p>
+<ul>
+<li>交叉点矩阵（开关阵列）</li>
+<li>控制存储器（Control Memory，CM）</li>
+</ul>
+</li>
+<li><p>功能</p>
+<ul>
+<li>输入输出线之间的空间交换</li>
+</ul>
+</li>
+<li><p>结构特点</p>
+<ul>
+<li>S接线器所含CM数量等于入（出）线数</li>
+<li>每个CM所含有的存储单元个数等于入（出）线上的复用时隙数</li>
+<li>每个存储单元为$m$位bit，且满足$N{\le}2^m$，其中$N$为接线器的入（出）线数</li>
+</ul>
+</li>
+<li><p>控制方式：考虑$N{\times}N$交换单元，共$N$个$CM$，每个$CM$有$n$个单元，每个单元对应一个时隙（Time Slot，TS）</p>
+<ul>
+<li><p><strong>输入控制方式</strong>：入线$i$在$TS_j$的出线为$CM_i(j)$，在$TS_j$时须打开开关$K_{i,CM_i(j)}$</p>
+</li>
+<li><p><strong>输出控制方式</strong>：出线$i$在$TS_j$的入线为$CM_i(j)$，在$TS_j$时须打开开关$K_{CM_i(j),i}$</p>
+</li>
+</ul>
+</li>
+<li><p>基本特点</p>
+<ul>
+<li>只完成空间交换，不进行时隙交换</li>
+<li>空间接线器按时分方式工作</li>
+<li>输出控制方式易于实现多播</li>
+</ul>
+</li>
+</ul>
+<h4 id="时分交换单元"><a href="#时分交换单元" class="headerlink" title="时分交换单元"></a>时分交换单元</h4><p>时分交换单元内部只存在一条唯一的通路，由输入复用线上各子信道分时共享</p>
+<ul>
+<li>共享存储器型交换单元<ul>
+<li>考虑$N{\times}N$交换单元，将存储器划分为$N$个区域<ul>
+<li><strong>输入缓冲方式</strong>：存储器中的$N$个区域与$N$路输入信号一一对应</li>
+<li><strong>输出缓冲方式</strong>：存储器中的$N$个区域与$N$路输出信号一一对应</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>共享总线型交换单元<ul>
+<li>输入部件：接收入线信号，进行相应的格式变换，放在缓冲存储器中，并在分配给该部件的时隙上把收到的信息送到总线上。</li>
+<li>输出部件：检测总线上的信号，并把属于自己的信息读入一个缓冲存储器中，进行格式变换，由出线送出，形成出线信号。</li>
+</ul>
+</li>
+</ul>
+<p>时间接线器（T接线器）：共享存储器型交换单元</p>
+<ul>
+<li>输入线（入复用线）：同步时分复用线</li>
+<li>输出线（出复用线）：同步时分复用线</li>
+<li>功能：完成一条同步时分复用线上各个时隙之间的话音信息的交换</li>
+<li>应用：数字电话交换系统</li>
+<li>基本结构（设输入复用线上每帧的时隙数为$n$）<ul>
+<li>话音存储器（Speech Memory，SM)：暂存话音的数字编码信息，单元数为$n$，每个单元至少8 bit，</li>
+<li>控制存储器（Control Memory，CM)：单元数为$n$，每个单元$\log_2c$ bit</li>
+</ul>
+</li>
+<li>控制方式（设$TS_k$输入的数据需要在$TS_i$被读出）<ul>
+<li><strong>输出控制方式</strong>：顺序写入，控制读出。置$CM(i)&#x3D;k$，$TS_k$时，数据暂存在$SM(k)$，$TS_i$时，$SM(CM(i))&#x3D;SM(k)$处数据被读出</li>
+<li><strong>输入控制方式</strong>：控制写入，顺序读出。置$CM(k)&#x3D;i$，$TS_k$时，数据暂存在$SM(CM(k))&#x3D;SM(i)$，$TS_i$时，$SM(i)$处数据被读出</li>
+</ul>
+</li>
+<li>特性<ul>
+<li>控制存储器：交换控制表</li>
+<li>话音存储器和控制存储器的访问速度应满足一个时隙内各完成一次读写操作</li>
+<li>T接线器交换信息存在着时延，时延最好的情况是入复用线上第$i$个时隙的信息要交换到出复用线第$i$个时隙，时延最坏的情况是入复用线上第$i$个时隙的信息要交换到出复用线上第$i-1$个时隙</li>
+</ul>
+</li>
+</ul>
+<h3 id="交换网络-1"><a href="#交换网络-1" class="headerlink" title="交换网络"></a>交换网络</h3><h4 id="交换网络基本概念"><a href="#交换网络基本概念" class="headerlink" title="交换网络基本概念"></a>交换网络基本概念</h4><p>交换网络：由若干个交换单元按照一定的拓扑结构和控制方式构成的网络。</p>
+<p>交换网络的三个基本要素</p>
+<ul>
+<li>交换单元</li>
+<li>不同交换单元间的拓扑连接</li>
+<li>控制方式</li>
+</ul>
+<p>交换网络按拓扑连接方式可分为</p>
+<ul>
+<li><strong>单级交换网络</strong>：由一个或者多个位于同一级的交换单元所构成的交换网络，即需要交换的信息从交换网络入线到交换网络出线只经过一个交换单元，并且当同一级有多个交换单元构成时，不同交换单元的入线与出线之间可建立连接。</li>
+<li><strong>多级交换网络</strong>：如果一个交换网络中的交换单元可以分为K级，顺序命名为第1,2,…,K级，并且满足：<ul>
+<li>所有入线都只与第1级交换单元连接</li>
+<li>所有第1级交换单元都只与入线和第2级交换单元连接</li>
+<li>所有第2级交换单元都只与第1级和第3级交换单元连接</li>
+<li>依此类推，所有第K级交换单元都只与第K-1级和出线连接</li>
+</ul>
+</li>
+<li>则称这样的交换网络为多级交换网络，或K级交换网络</li>
+</ul>
+<p><strong>阻塞</strong>：从交换网络不同输入端来的信息在交换网络中交换时发生了对同一公共资源争抢的情况，这时在竞争资源中失败的信息就会被阻塞，直到这个公共资源被释放。</p>
+<p>阻塞的两种情况：内部竞争、出线竞争</p>
+<ul>
+<li><p><strong>严格无阻塞网络</strong>：不管网络处于何种状态，任何时刻都可以在交换网络中建立一个连接，只要这个连接的起点、终点是空闲的，而不会影响网络中已建立起来的连接。</p>
+</li>
+<li><p><strong>可重排无阻塞网络</strong>：不管网络处于何种状态，任何时刻都可以在交换网络中直接或对已有的连接重选路由来建立一个连接，只要这个连接的起点、终点是空闲的，而不会影响网络中已建立起来的连接。</p>
+</li>
+<li><p><strong>广义无阻塞网络</strong>：指一个给定的网络存在着固有的阻塞可能，但又可能存在着一种精巧的选路方法，使得所有的阻塞均可避免，而不必重新安排网络中已建立起来的连接。</p>
+</li>
+<li><p>单通路交换网络</p>
+</li>
+<li><p>多通路交换网络</p>
+</li>
+<li><p>时分交换网络：时分结构的基本特征是所有的输入与输出端口分时共享单一的通信通路，具有时隙交换功能 。</p>
+</li>
+<li><p>空分交换网络：空分结构的基本特征是可以在多对输入端口与输出端口间同时并行地传送信息，具有空间交换的功能。</p>
+</li>
+</ul>
+<h4 id="CLOS网络"><a href="#CLOS网络" class="headerlink" title="CLOS网络"></a>CLOS网络</h4><p>CLOS网络一般指 $N{\times}N$ 3级CLOS网络，其中，入线被划分为 $r$ 组，每组有 $n$ 条入线，即 $N&#x3D;r{\times}n$</p>
+<ul>
+<li>第1级共有 $r$ 个 $n{\times}m$ 交换单元，$r$ 组入线正好分别接入 $r$ 个交换单元</li>
+<li>第2级共有 $m$ 个 $r{\times}r$ 交换单元，第1级每个交换单元的 $m$ 条输出分别接到第2级中的 $m$ 个交换单元</li>
+<li>第3级共有 $r$ 个 $m{\times}n$ 交换单元，第2级每个交换单元的 $r$ 条输出分别接到第3级中的 $r$ 个交换单元</li>
+</ul>
+<p>CLOS网络严格无阻塞定理：最坏情况下，中间级会有$(n-1){\times}2$个交换单元被占用，因此中间级至少要有$(n-1){\times}2+1&#x3D;2n-1$个交换单元，即$m{\ge}2n-1$时，可确保严格无阻塞。</p>
+<p>3级CLOS可重排无阻塞网络条件：$m{\ge}n$</p>
+<h4 id="banyan网络"><a href="#banyan网络" class="headerlink" title="banyan网络"></a>banyan网络</h4><p>banyan网络基本结构</p>
+<ul>
+<li>L级banyan：任何输入到任何输出之间的通路都经过L级</li>
+<li>规则banyan：各个交换单元是相同</li>
+<li>不规则banyan：各个交换单元不相同</li>
+<li>矩形banyan：每个交换单元的入线数等于出线数</li>
+</ul>
+<p>通常将由 $2{\times}2$ 的交换单元构成的矩形banyan网络，简称为banyan网络</p>
+<p>banyan网络基本特性</p>
+<ul>
+<li><strong>树型结构特性</strong>：从banyan的任一输入端口引出的一组通路形成了2分支树，级数越多，分支越多，级数$k&#x3D;\log_2N$，$N&#x3D;总入线数&#x2F;出线数$，即$2^k&#x3D;N$。</li>
+<li><strong>自选路由特性</strong>：自选路由，即是给定出线地址，不用外加控制命令，就可选到出线。可以使用对应于出端号的二进制码的选路标签来自动选路。</li>
+<li><strong>可扩展性（可规律构造）</strong>：banyan的构成具有一定的规律，可以采用有规则的扩展方法将较小容量的banyan扩展成较大规模。方法：已有$N{\times}N$的banyan网络，需构成$2N{\times}2N$的banyan网络，则可用2组 $N{\times}N$，再加上一组$N$个 $2{\times}2$ 交换单元构成。将$N$个 $2{\times}2$ 交换单元的入线作为该网络的入线，将每个 $2{\times}2$ 交换单元的出线分别与第一组的 $N{\times}N$ 和第二组的 $N{\times}N$ 的相连，2组 $N{\times}N$ 的出线即为网络的出线。（第 $n$ 级为 $\beta_{(\log_2N-n)}$ 置换）</li>
+<li><strong>单通路特性</strong>：banyan的任一入端到任一出端之间，具有1条且仅有一条通路。</li>
+<li><strong>内部竟争性</strong>：banyan是具有内部竞争的有阻塞网络。</li>
+</ul>
+<p>解决内部阻塞的方法</p>
+<ul>
+<li>使用排序-banyan网络</li>
+<li>构造多通路<ul>
+<li>可以通过增加多级交换网络的级数来消除内部阻塞（已有证明，若要完全消除 $N{\times}N$ 的banyan网络的内部阻塞，至少需要 $2\log_2N-1$级）</li>
+<li>对应一个输出地址有多条链路</li>
+<li>可以增加banyan网的平面树，构成多通道交换网络</li>
+</ul>
+</li>
+</ul>
+<p>batcher-banyan网络：该网络也简称为B-B网，是由batcher排序网和banyan网组成，它成功地避免了banyan网络的内部阻塞，这是目前ATM交换机使用较多的一种网络。batcher排序网是由 $2{\times}2$ 比较器（batcher比较器）构成的。</p>
+<p>基于banyan的多通路结构</p>
+<p>为了减少或消除banyan的内部阻塞，提高吞吐率，除了构成B-B网络之外，还可以构成基于banyan的各种多通路网络。</p>
+<ul>
+<li>增长型banyan：每增加1级，每个入端与每个出端之间的通路数就增加1倍</li>
+<li>扩展型banyan：每个输出地址有 $d$ 条，链路输出地址并非 $2d$ 个</li>
+<li>膨胀型banyan：膨胀度 $d$ 在各级可变化，扩展型banyan的特例</li>
+<li>复份型banyan：多平面banyan网络结构，负荷均分、广播功能</li>
+</ul>
+<h4 id="benes网络"><a href="#benes网络" class="headerlink" title="benes网络"></a>benes网络</h4><p>benes网络是著名的多通路网络，具有可重排无阻塞的特点。</p>
+<p>benes网络相当于两个banyan(banyan与反转banyan)的背对背相连，并将中间相邻两级合并为1级。由于每个banyan有 $\log_2N$ 级，因此benes网络共有 $2\log_2N-1$ 级</p>
+<p>benes网络的构成也有一定的规律。使用 $2{\times}2$ 交换单元的 $N{\times}N$ benes网络的构成方法为：两侧各有 $\frac{N}{2}$ 个 $2{\times}2$ 交换单元，中间为两个 $\frac{N}{2}{\times}\frac{N}{2}$ 的子网络，每个交换单元以一条链路连到每个子网络；再将中间子网络按上述方法继续分解，直到中间子网络就是 $2{\times}2$ 交换单元为止。</p>
+<h2 id="分组交换-1"><a href="#分组交换-1" class="headerlink" title="分组交换"></a>分组交换</h2><h3 id="MPLS产生背景"><a href="#MPLS产生背景" class="headerlink" title="MPLS产生背景"></a>MPLS产生背景</h3><p>问题一：新的业务(数据、多媒体等)出现后，如何有效支撑相关业务应用？</p>
+<p>ISDN网络可提供综合业务</p>
+<p>ISDN技术发展</p>
+<ul>
+<li>20世纪70年代提出</li>
+<li>20世纪80年代中期标准推出、实验网建设</li>
+<li>20世纪80年代末、90年代初向公众开放</li>
+<li>20世纪90年代末开始逐渐淡出网络应用</li>
+<li>原因<ul>
+<li>技术：以电路交换模式为基础，不能满足业务发展需求</li>
+<li>市场：ADSL技术应用的冲击</li>
+</ul>
+</li>
+</ul>
+<p>问题二：新的支持多种业务(话音、数据、视频、多媒体通信等)的宽带网络的设计目标？</p>
+<ul>
+<li>对信息的损伤要小<ul>
+<li>具有时间透明性(信息传送的时延和时延抖动要小)</li>
+<li>具有语义透明性(由传送引起的信息丢失和差错要小)</li>
+</ul>
+</li>
+<li>能灵活地支持各种业务</li>
+<li>具有高速传送信息的能力</li>
+</ul>
+<p>ATM基本原理</p>
+<ul>
+<li>ATM信元及其结构<ul>
+<li>信元结构：信元由 5 字节信头和 48 字节信息段（净荷）组成</li>
+<li>GFC（Generic Flow Control）：一般<strong>流量控制</strong>字段，4 bit，用于接入的流量控制。由于B-ISDN的UNI接入的终端数量可以很多，需要控制流向网络的流量，以避免网络，短期过载。</li>
+<li>VPI&#x2F;VCI（Virtual Path Identifier&#x2F;Virtual Channel Identifier）：<strong>选路信息</strong></li>
+<li>PT（Payload Type）：3 bit，表示<strong>净荷类型</strong></li>
+<li>CLP（Cell  Loss Priority）：表示<strong>信元丢失优先级</strong>，1 bit，CLP&#x3D;0，表示高优先级；CLP&#x3D;1，表示低优先级，若遇到拥塞要丢弃信元时，CLP&#x3D;1的信元将首先丢弃。</li>
+<li>HEC（Head Error Control）：8 bit，用于信头<strong>差错控制</strong></li>
+</ul>
+</li>
+<li>异步时分复用技术<ul>
+<li>STD（Synchronous Time Division）：通过<strong>时间位置</strong>来区别每一个逻辑信道</li>
+<li>ATD（Asynchronous Time Division）：通过<strong>标记</strong>来区别每一个逻辑信道</li>
+</ul>
+</li>
+<li>面向连接的工作方式<ul>
+<li>ATM传输通道可分割成若干个逻辑子信道 ，为便于应用和管理，逻辑子信道可按两个等级来划分<ul>
+<li>虚通道（Virtual Path，VP）</li>
+<li>虚信道（Virtual Channel，VC）</li>
+</ul>
+</li>
+<li>VP交换是指仅变换VPI值而不改变VCI值的交换，即只进行虚通道的交换，虚通道里面的虚信道并不进行交换。</li>
+<li>ATM连接的建立过程。在源ATM端点与目的ATM端点进行通信前的连接建立过程，实际上就是在这两个端点间的各段传输通道上，找寻空闲VC链路和VP链路，分配VCI与VPI，建立相应VCC与VPC的过程。</li>
+</ul>
+</li>
+</ul>
+<p>ATM技术应用现状</p>
+<ul>
+<li>退出骨干网</li>
+<li>应用于城域网</li>
+</ul>
+<p>问题三：下一个宽带交换技术应该是怎样的？</p>
+<ul>
+<li>低时延</li>
+<li>高带宽</li>
+<li>高可靠</li>
+<li>灵活支持各类业务</li>
+</ul>
+<h3 id="多协议标记交换"><a href="#多协议标记交换" class="headerlink" title="多协议标记交换"></a>多协议标记交换</h3><h4 id="什么是MPLS"><a href="#什么是MPLS" class="headerlink" title="什么是MPLS"></a>什么是MPLS</h4><p>问题：IP网络信息传送的特点（业务节点的功能） ？</p>
+<ul>
+<li>分组交换(数据报方式)</li>
+<li>无连接工作方式</li>
+<li>动态分配带宽(统计时分复用)</li>
+<li>无QoS保证(尽力而为)</li>
+</ul>
+<p>IP网络技术特点：</p>
+<ul>
+<li>优点：技术简单、可扩展性好、灵活性高</li>
+<li>存在问题：传输效率低、无法保证服务质量</li>
+</ul>
+<p>问题：ATM网络信息传送的特点（业务节点的功能）？</p>
+<ul>
+<li>ATM交换方式</li>
+<li>面向连接工作方式(逻辑连接)</li>
+<li>动态分配带宽(异步时分复用)</li>
+<li>有QoS保证</li>
+</ul>
+<p>ATM网络技术特点：</p>
+<ul>
+<li>优点：可满足多业务需求、传输效率高保证服务质量、有流量控制</li>
+<li>存在问题：技术复杂、可扩展性不好</li>
+</ul>
+<p>多协议标记交换（Multi-Protocol Label Switching，MPLS）</p>
+<p>MPLS是利用标记进行数据转发的。当分组进入网络时，要为其分配固定长度的短的标记并将标记与分组封装在一起，在整个转发过程中，交换节点仅根据标记进行转发。</p>
+<ul>
+<li>LABEL(20bit)：标记的编码值。</li>
+<li>EXP(3bit)：保留位。</li>
+<li>S(1bit)：栈底指示位，1表示当前标记为栈底标记，0表示当前标记不是栈底。</li>
+<li>TTL(8bit)：生存时间标识，与IP分组头中的TTL域含义相同。</li>
+</ul>
+<p>MPLS具有“多协议”特性，对上兼容IPv4、IPv6等多种主流网络层协议，将各种传输技术统一在一个平台之上；对下支持ATM、FR、PPP等链路层多种协议，从而使得多种网络的互连互通成为可能。</p>
+<h4 id="MPLS网络体系结构"><a href="#MPLS网络体系结构" class="headerlink" title="MPLS网络体系结构"></a>MPLS网络体系结构</h4><p>边缘路由器LER(Label Edge Router)</p>
+<ul>
+<li>入口LER:<ul>
+<li>分配标记</li>
+<li>将IP分组封装成标记分组</li>
+<li>将标记分组从相应端口转发出去</li>
+</ul>
+</li>
+<li>出口LER:<ul>
+<li>去除标记，将标记分组还原为IP分组</li>
+<li>查找路由表将IP分组转发出去</li>
+</ul>
+</li>
+</ul>
+<p>核心路由器LSR(Label Switching Router)</p>
+<ul>
+<li>依据标记信息表进行转发</li>
+</ul>
+<p>标记交换路径LSP(Label Switching Path)</p>
+<ul>
+<li>MPLS网络为具有一些共同特性的分组通过网络而选定的一条通路，由入口的边缘交换路由器，一系列核心路由器和出口的边缘交换路由器以及它们之间由标记所标识的逻辑信道组成。</li>
+</ul>
+<p>标记分发协议LDP(Label Distribution Protocol)</p>
+<ul>
+<li>MPLS的控制协议，用于LSR之间交换信息，完成LSP的建立、维护和拆除等功能。</li>
+</ul>
+<p>转发等价类FEC(Forwarding Equivalence Class)</p>
+<ul>
+<li>在MPLS网络中经过相同的LSP，完成相同的转发处理的一些数据分组，这些数据分组具有某些相同的特性。</li>
+<li>FEC的划分通常依据网络层的目的地址前缀或是主机地址。</li>
+</ul>
+<p>标记映射</p>
+<ul>
+<li>将标记分配给FEC。</li>
+</ul>
+<h4 id="MPLS基本交换原理"><a href="#MPLS基本交换原理" class="headerlink" title="MPLS基本交换原理"></a>MPLS基本交换原理</h4><p>MPLS交换采用面向连接的工作方式，信息传送要经过以下三个阶段:</p>
+<ul>
+<li>建立连接：对于MPLS来说，建立连接就是形成标记交换路径LSP的过程<ul>
+<li>LSP建立控制方式<ul>
+<li>独立控制方式：每个LSR可以独立地为FEC分配标记，并将映射关系向相邻LSR发布</li>
+<li>有序控制方式：一个LSR为某FEC分配标记当且仅当该LSR是MPLS网络的出口LER，或者该LSR收到某FEC目的地址前缀的下一跳LSR发来的对应此FEC的标记映射。</li>
+</ul>
+</li>
+<li>标记分配过程(LDP)<ul>
+<li>发现相邻的LDP对等体：使用UDP广播，发现相邻LSR</li>
+<li>建立LDP会话：相邻LSR间建立TCP连接，并建立LDP会话</li>
+<li>建立LSP：标记由下游LSR分配，并沿LDP会话通知上游LSR</li>
+</ul>
+</li>
+<li>标记分配方式<ul>
+<li>上游标记分配 (一般不使用)</li>
+<li>下游自主标记分配</li>
+<li>下游按需标记分配</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数据传输：数据传输就是数据分组沿LSP进行转发的过程<ul>
+<li>入口路由器的处理过程<ul>
+<li>数据分组到LSP的映射、将数据分组封装成标记分组、将标记分组从相应端口转发出去</li>
+</ul>
+</li>
+<li>核心路由器的处理过程<ul>
+<li>依据标记进行转发</li>
+</ul>
+</li>
+<li>出口路由器的处理过程<ul>
+<li>弹出标记、用网络层地址查找路由表确定下一跳</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>拆除连接：拆除连接就是通信结束或发生故障异常时释放LSP的过程<ul>
+<li>连接的拆除也就是标记的取消，标记取消的方式主要有两种<ul>
+<li>采用计时器方式</li>
+<li>通过LDP消息取消标记</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="MPLS交换节点体系结构"><a href="#MPLS交换节点体系结构" class="headerlink" title="MPLS交换节点体系结构"></a>MPLS交换节点体系结构</h4><h3 id="新一代互联网IPv6-技术"><a href="#新一代互联网IPv6-技术" class="headerlink" title="新一代互联网IPv6+技术"></a>新一代互联网IPv6+技术</h3><h4 id="SRv6"><a href="#SRv6" class="headerlink" title="SRv6"></a>SRv6</h4><p>SR(Segment Routing-段路由)概述</p>
+<ul>
+<li>SR(Segment Routing,段路由)是基于源路由理念而设计的在网络上转发数据包的一种架构</li>
+<li>SR将网络路径分成一个个段(Segment),并且为这些段和网络中的转发节点分配段标识ID;通过对段和网络节点进行有序排列(Segment List),就可以得到一条转发路径</li>
+<li>SR将代表转发路径的段序列编码在数据包头部</li>
+</ul>
+<p>SR的基本概念</p>
+<ul>
+<li><p>Segment</p>
+<ul>
+<li>节点针对所收到的数据包要执行的指令,该指令包含在数据包头部中</li>
+<li>例如<ul>
+<li>指令1:沿着最短路径到达R4(支持ECMP)</li>
+<li>指令2:沿着R4的GE0&#x2F;0&#x2F;2接口转发数据包</li>
+<li>指令3:沿着最短路径到达R8(支持ECMP)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Segment ID(SID)</p>
+<ul>
+<li><p>用于标识Segment,它的格式取决于具体的技术实现,例如可以使用MPLS标签、MPLS标签空间中的索引、IPv6地址。</p>
+</li>
+<li><p>Segment List是一个或多个SID构成的有序列表。</p>
+</li>
+<li><p>例如</p>
+<ul>
+<li>指令1(400):沿着支持ECMP的最短路径到达R4</li>
+<li>指令2(1046):沿着R4的GE0&#x2F;0&#x2F;2接口转发数据包</li>
+<li>指令3(800):沿着支持ECMP的最短路径到达R8</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>源路由(Source Routing)：源节点选择一条路径并在报文中压入一个有序的Segment List , 网络中的其他节点按照报文封装的Segment List进行转发。</p>
+</li>
+</ul>
+<p>SR在MPLS上的实现：SR-MPLS</p>
+<p>SR在IPv6上的实现：SRv6</p>
+<h4 id="网络切片"><a href="#网络切片" class="headerlink" title="网络切片"></a>网络切片</h4><p>网络切片是在一张物理网络上切分出多张包含特定网络功能,由定制网络拓扑和网络资源组成的虚拟网络,用于满足不同网络切片租户的业务功能需求和提供服务质量 SLA ( Service Level Agreement ,服务等级协议)保证。</p>
+<p>FlexE(Flexible Ethernet,灵活以太网):是承载网实现业务隔离承载和网络切片的一种接口技术。FlexE技术将一个大带宽的以太网物理接口按时隙池化,通过时隙资源池灵活划分出若干子通道接口(FlexE接口),实现对接口资源的灵活、精细化管理。 </p>
+<h4 id="APN6"><a href="#APN6" class="headerlink" title="APN6"></a>APN6</h4><p>当网络感知应用后便能够在识别应用数据的基础上,结合SRv6、网络切片等新技术,针对关键应用或关键用户提供差异化 的 SLA ( Service Level Agreement ,服 务等 级协议 )保 障,实现应用流量的精细化资源调度,保证应用体验。</p>
+<p>APN6(Application-aware IPv6 Networking,应用感知的IPv6网络)利用IPv6报文自带的可编程空间,将应用感知信息以APN头部的方式携带进入网络,使得网络能够感知应用及其需求,进而为其提供精细的网络服务和精准的网络运维服务。</p>
+<p>应用感知信息(类比“货物信息”)主要包括:</p>
+<ul>
+<li>应用感知标识(APN-ID):便于网络区分不同应用流和某个&#x2F;类应用的不同用户(组)等。APN6方案中,该内容为必选。(类比“货物类型”)</li>
+<li>应用感知参数(APN Parameters):可以包括带宽、时延、抖动、丢包率等应用对网络性能的需求参数。在APN6方案中,该内容为可选。(类比“运输需求”)</li>
+</ul>
+<h2 id="SIP协议"><a href="#SIP协议" class="headerlink" title="SIP协议"></a>SIP协议</h2><h3 id="SIP协议产生背景"><a href="#SIP协议产生背景" class="headerlink" title="SIP协议产生背景"></a>SIP协议产生背景</h3><h3 id="SIP协议基础"><a href="#SIP协议基础" class="headerlink" title="SIP协议基础"></a>SIP协议基础</h3><h4 id="SIP设计目标"><a href="#SIP设计目标" class="headerlink" title="SIP设计目标"></a>SIP设计目标</h4><p>SIP协议是一种应用层会话控制协议，用于建立、修改、终止用户之间的多媒体会话(邀请指定用户加入多媒体会话)</p>
+<h4 id="SIP体系架构及功能实体"><a href="#SIP体系架构及功能实体" class="headerlink" title="SIP体系架构及功能实体"></a>SIP体系架构及功能实体</h4><p>SIP协议网络架构</p>
+<ul>
+<li><p>SIP是一种C&#x2F;S(客户-服务器)结构的协议</p>
+<ul>
+<li><p>SIP client发出Request,SIP Server给出Response</p>
+</li>
+<li><p>消息处理与HTTP类似,易于与其他应用集成</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>用户代理</p>
+<ul>
+<li>用户终端系统中的SIP应用称作SIP用户代理(UA)<ul>
+<li>用户代理客户(UAC):发送SIP请求</li>
+<li>用户代理服务器(UAS):<ul>
+<li>侦听呼叫请求</li>
+<li>提示用户或执行程序作出响应</li>
+</ul>
+</li>
+<li>UA&#x3D;UAC+UAS</li>
+</ul>
+</li>
+</ul>
+<p>网络服务器</p>
+<ul>
+<li>注册服务器(Register Server)<ul>
+<li>接收客户当前的位置信息。</li>
+</ul>
+</li>
+<li>代理服务器(Proxy Server)<ul>
+<li>将客户的请求转发到另一SIP服务器或最终的目的地,也可能将请求分发到多个服务器。</li>
+</ul>
+</li>
+<li>重定向服务器(Redirect Server)<ul>
+<li>通过响应告诉客户下一跳服务器的地址,然后客户根据此地址向下一跳服务器重新发送请求。</li>
+</ul>
+</li>
+</ul>
+<p>两种目标用户定位方式</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Proxy处理模式</th>
+<th>Redirect处理模式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>完成功能</td>
+<td>完成用户管理、路由的能力</td>
+<td>完成用户管理、路由的能力</td>
+</tr>
+<tr>
+<td>处理原则</td>
+<td>转交会话请求</td>
+<td>不转交会话请求，通知转交方向</td>
+</tr>
+<tr>
+<td>特点</td>
+<td>会话接续的主动权在Proxy，类比集中控制</td>
+<td>会话接续的主动权在User，类比分散控制</td>
+</tr>
+</tbody></table>
+<h4 id="SIP协议消息"><a href="#SIP协议消息" class="headerlink" title="SIP协议消息"></a>SIP协议消息</h4><p>SIP协议操作特征</p>
+<ul>
+<li>SIP协议网络架构采用C&#x2F;S结构</li>
+<li>SIP协议消息采用“Request”-“Response”机制<ul>
+<li>Client → Server: Request: for the purpose of invoking a particular operation<ul>
+<li>REGISTER：将用户位置信息送往SIP服务器</li>
+<li>INVITE：邀请一个用户加入一电话呼叫或会议</li>
+<li>BYE：中止两用户之间的连接</li>
+<li>OPTIONS：请求有关用户能力的信息，但不建立呼叫</li>
+<li>STATUS：通知另一服务器正在进行的信令动作进展情况</li>
+<li>CANCEL：中止用户的查找（取消未决的请求）</li>
+<li>ACK：证实客户已收到最终的相应</li>
+</ul>
+</li>
+<li>Server → Client: Responses: for indicating the status of a request sent from the client to the server.<ul>
+<li>1xx Provisional：临时响应，代表服务端接纳了用户的服务请求，并在服务过程中传递一些服务进展的信息<ul>
+<li>100 Trying：服务处理过程中</li>
+<li>180 Ringing：被叫振铃</li>
+</ul>
+</li>
+<li>2xx Successful：最终响应，代表请求处理成功<ul>
+<li>200 OK</li>
+</ul>
+</li>
+<li>3xx Redirection：最终响应，代表请求被重定向，用户可以根据返回的重定向地址向新的地址发起服务请求<ul>
+<li>302 Moved Temporarily：临时迁移到XXX</li>
+</ul>
+</li>
+<li>4xx Request Failure：最终响应，代表请求处理失败，用户可以根据失败的原因进行处理<ul>
+<li>403 Forbidden：拒绝服务</li>
+<li>404 Not Found：呼叫地址不存在</li>
+</ul>
+</li>
+<li>5xx Server Failure：最终响应，代表请求处理因为服务器内部原因失败，用户可以尝试向其他服务器发起服务请求<ul>
+<li>500 Server Internal Error</li>
+</ul>
+</li>
+<li>6xx Global Failures：最终响应，代表请求处理因为全局原因失败，用户也不用再尝试其他服务器了<ul>
+<li>600 Busy Everywhere</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>基本会话语义与消息</p>
+<pre class="mermaid">sequenceDiagram
+    participant UA1 as UA
+    participant Proxy as Call Stateful Proxy
+    participant UA2 as UA
+
+    UA2->>+Proxy: REGISTER -- 用户注册（绑定AOR与实际地址）
+    Proxy-->>-UA2: 200 OK
+    
+    UA1->>+Proxy: INVITE -- 发起呼叫（邀请用户加入会话）
+    Proxy->>+UA2: INVITE
+    Proxy-->>UA1: 100 Trying -- 呼叫被接纳（请求已收到，正在处理）
+    UA2-->>Proxy: 180 Ringing -- 已经向被叫振铃（请求的处理进展）
+    Proxy-->>UA1: 180 Ringing
+    UA2-->>-Proxy: 200 OK -- 被叫摘机，呼叫建立（确认INVITE请求被成功处理）
+    Proxy-->>-UA1: 200 OK
+    UA1->>Proxy: ACK -- 主叫确认呼叫已经建立（确认INVITE的处理响应成功传送）
+    Proxy->>UA2: ACK
+    
+    UA2->>+Proxy: BYE -- 呼叫释放（释放会话邀请）
+    Proxy->>+UA1: BYE
+    UA1-->>-Proxy: 200 OK -- 呼叫成功释放（确认BYE请求成功处理完成）
+    Proxy-->>-UA2: 200 OK</pre>
+
+<p>SIP协议消息结构</p>
+<ul>
+<li>start-line<ul>
+<li>Request-Line: Method SP Request-URI SP SIP-Version CRLF（请求消息）</li>
+<li>Status-Line: SIP-Version SP Status-Code SP Reason-Phrase CRLF（响应消息）</li>
+</ul>
+</li>
+<li>*message-header：”header-name” HCOLON header-value *(COMMA header-value) CRLF<ul>
+<li>From：请求发起者AOR地址</li>
+<li>To：请求目的端AOR地址</li>
+<li>Call-ID：呼叫标识</li>
+<li>Contact：请求发起人实际联系地址</li>
+<li>Cseq：消息序号</li>
+<li>Max-Forward：网络生存跳数</li>
+<li>Via：请求转发记录</li>
+<li>Content-Type：消息体类型</li>
+<li>Content-Length：消息体长度</li>
+</ul>
+</li>
+<li>CRLF</li>
+<li>[message-body]：可用于携带承载&#x2F;媒体协商信息(SDP)<ul>
+<li>v&#x3D;0<ul>
+<li>指示协议的版本</li>
+</ul>
+</li>
+<li>o&#x3D;picard 124333 67895 IN IP4 uunet.com<ul>
+<li>第一个参数表明会话发起者的名称</li>
+<li>第二个参数为主叫方的会话标识符 </li>
+<li>第三个参数为主叫方会话的版本，会话数据有改变时，版本号递增</li>
+<li>第四个参数定义了网络类型，IN表示Internet网络类型，目前仅定义该网络类型</li>
+<li>第五个参数为地址类型，目前只支持IPV4和IPV6两种地址类型</li>
+<li>第六个参数为地址:表明会话发起者的IP地址</li>
+</ul>
+</li>
+<li>s&#x3D;Engage!<ul>
+<li>表明本次会话标题或会话名称</li>
+</ul>
+</li>
+<li>t&#x3D;0 0<ul>
+<li>表示会话开始时间和结束时间</li>
+</ul>
+</li>
+<li>c&#x3D;IN IP4 101.234.2.1<ul>
+<li>第一个参数为网络类型，IN表示Internet</li>
+<li>第二个参数为地址类型，目前支持IPV4和IPV6</li>
+<li>第三个参数为地址，为多媒体流使用的IP地址</li>
+</ul>
+</li>
+<li>m&#x3D;audio 3456 RTP&#x2F;AVP 0 3 9<ul>
+<li>第一个参数为媒体名称：表明支持音频类型</li>
+<li>第二个参数为端口号,表明在本地端口为3458上发送音频流</li>
+<li>第三个参数为传输协议,一般为 RTP&#x2F;AVP 协议</li>
+<li>四-N参数为所支持的N-4+1个净荷类型编号</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">INVITE sip:werner.heisenberg@munich.de SIP/2.0</span><br><span class="line"><span class="attribute">Via</span><span class="punctuation">: </span>SIP/2.0/UDP 100.101.102.103:5060;branch=z9hG4bKmp17a</span><br><span class="line"><span class="attribute">Max-Forwards</span><span class="punctuation">: </span>70</span><br><span class="line"><span class="attribute">To</span><span class="punctuation">: </span>Heisenberg &lt;sip:werner.heisenberg@munich.de&gt;</span><br><span class="line"><span class="attribute">From</span><span class="punctuation">: </span>E.Schroedinger &lt;sip:schroed5244@aol.com&gt;;tag=42</span><br><span class="line"><span class="attribute">Call-ID</span><span class="punctuation">: </span>10@100.101.102.103</span><br><span class="line"><span class="attribute">CSeq</span><span class="punctuation">: </span>1 INVITE</span><br><span class="line"><span class="attribute">Contact</span><span class="punctuation">: </span>&lt;sip:schroed5244@aol.com&gt;</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/sdp</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>159</span><br><span class="line"></span><br><span class="line">v=0</span><br><span class="line">o=schored5244 2890844526 2890844526 IN IP4 100.101.102.103</span><br><span class="line">s=Phone Call</span><br><span class="line">t=0 0</span><br><span class="line">c=IN IP4 100.101.102.103</span><br><span class="line">m=audio 49170 RTP/AVP 0</span><br><span class="line">a=rtpmap:0 PCMU/8000</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">SIP/2.0 200 OK</span><br><span class="line"><span class="attribute">Via</span><span class="punctuation">: </span>SIP/2.0/UDP 100.101.102.103:5060;branch=z9hG4bKmp17a</span><br><span class="line"><span class="attribute">Max-Forwards</span><span class="punctuation">: </span>70</span><br><span class="line"><span class="attribute">To</span><span class="punctuation">: </span>Heisenberg &lt;sip:werner.heisenberg@munich.de&gt;</span><br><span class="line"><span class="attribute">From</span><span class="punctuation">: </span>E.Schroedinger &lt;sip:schroed5244@aol.com&gt;;tag=42</span><br><span class="line"><span class="attribute">Call-ID</span><span class="punctuation">: </span>10@100.101.102.103</span><br><span class="line"><span class="attribute">CSeq</span><span class="punctuation">: </span>1 INVITE</span><br><span class="line"><span class="attribute">Contact</span><span class="punctuation">: </span>&lt;sip:werner.heisenberg@200.201.202.203&gt;</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/sdp</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>159</span><br><span class="line"></span><br><span class="line">v=0</span><br><span class="line">o=heisenberg 2890844526 2890844526 IN IP4 200.201.202.203</span><br><span class="line">c=IN IP4 200.201.202.203</span><br><span class="line">t=0 0</span><br><span class="line">m=audio 49170 RTP/AVP 0</span><br><span class="line">a=rtpmap:0 PCMU/8000</span><br></pre></td></tr></table></figure>
+
+<h3 id="SIP协议基本流程与状态管理"><a href="#SIP协议基本流程与状态管理" class="headerlink" title="SIP协议基本流程与状态管理"></a>SIP协议基本流程与状态管理</h3><h4 id="SIP基本流程"><a href="#SIP基本流程" class="headerlink" title="SIP基本流程"></a>SIP基本流程</h4><p>注册流程</p>
+<pre class="mermaid">sequenceDiagram
+    participant UA
+    participant Proxy
+
+	UA->>+Proxy: REGISTER
+	Proxy-->>-UA: 407 Unauthorized
+    UA->>+Proxy: REGISTER
+	Proxy-->>-UA: 200 OK</pre>
+
+<p>第1步:终端先主动给代理服务器发一个REGISTER注册请求。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">REGISTER sip:example.com SIP/2.0</span><br><span class="line"><span class="attribute">Via</span><span class="punctuation">: </span>SIP/2.0.UDP 192.168.1.100:5060;branch=z9hG4bK123456</span><br><span class="line"><span class="attribute">From</span><span class="punctuation">: </span>&lt;sip:user@example.com&gt;;tag=987654</span><br><span class="line"><span class="attribute">To</span><span class="punctuation">: </span>&lt;sip:user@example.com&gt;</span><br><span class="line"><span class="attribute">Call-ID</span><span class="punctuation">: </span>abcdef123456@192.168.1.100</span><br><span class="line"><span class="attribute">CSeq</span><span class="punctuation">: </span>1 REGISTER</span><br><span class="line"><span class="attribute">Contact</span><span class="punctuation">: </span>&lt;sip:user@192.168.1.100:5060&gt;</span><br><span class="line"><span class="attribute">Expires</span><span class="punctuation">: </span>3600</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>0</span><br></pre></td></tr></table></figure>
+
+<p>第2步:服务器收到请求后,返回407状态码 ,这是 “未授权” 的意思,同时会附带一个nonce随机数,用来做后续认证的。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">SIP/2.0 407 Unauthorized</span><br><span class="line"><span class="attribute">Via</span><span class="punctuation">: </span>SIP/2.0.UDP 192.168.1.100:5060;branch=z9hG4bK123456</span><br><span class="line"><span class="attribute">From</span><span class="punctuation">: </span>&lt;sip:user@example.com&gt;;tag=987654</span><br><span class="line"><span class="attribute">To</span><span class="punctuation">: </span>&lt;sip:user@example.com&gt;;tag=xyz789</span><br><span class="line"><span class="attribute">Call-ID</span><span class="punctuation">: </span>abcdef123456@192.168.1.100</span><br><span class="line"><span class="attribute">CSeq</span><span class="punctuation">: </span>1 REGISTER</span><br><span class="line"><span class="attribute">WWW-Authenticate</span><span class="punctuation">: </span>Digest realm=&quot;example.com&quot;, nonce=&quot;dcd98b7102dd2f0e8b11d0f600bfb0c093&quot;, algorithm=MD5</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>0</span><br></pre></td></tr></table></figure>
+
+<p>第3步:终端拿到nonce后,按照认证规则计算出response,把这个结果放到新的REGISTER请求里,再发给服务器。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">REGISTER sip:example.com SIP/2.0</span><br><span class="line"><span class="attribute">Via</span><span class="punctuation">: </span>SIP/2.0.UDP  192.168.1.100:5060;branch=z9hG4bK654321</span><br><span class="line"><span class="attribute">From</span><span class="punctuation">: </span>&lt;sip:user@example.com&gt;;tag=987654</span><br><span class="line"><span class="attribute">To</span><span class="punctuation">: </span>&lt;sip:user@example.com&gt;</span><br><span class="line"><span class="attribute">Call-ID</span><span class="punctuation">: </span>abcdef123456@192.168.1.100</span><br><span class="line"><span class="attribute">CSeq</span><span class="punctuation">: </span>2 REGISTER</span><br><span class="line"><span class="attribute">Contact</span><span class="punctuation">: </span>&lt;sip:user@192.168.1.100:5060&gt;</span><br><span class="line"><span class="attribute">Expires</span><span class="punctuation">: </span>3600</span><br><span class="line"><span class="attribute">Authorization</span><span class="punctuation">: </span>Digest realm=&quot;example.com&quot;, nonce=&quot;dcd98b7102dd2f0e8b11d0f600bfb0c093&quot;, uri=&quot;sip:example.com&quot;, response=&quot;39677e3edaed7037bd8af592d8d2a038&quot;</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>0</span><br></pre></td></tr></table></figure>
+
+<p>第4步:服务器验证response没问题,就返回200 OK,表示注册成功。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">SIP/2.0 200 OK</span><br><span class="line"><span class="attribute">Via</span><span class="punctuation">: </span>SIP/2.0.UDP 192.168.1.100:5060;branch=z9hG4bK654321</span><br><span class="line"><span class="attribute">From</span><span class="punctuation">: </span>&lt;sip:user@example.com&gt;;tag=987654</span><br><span class="line"><span class="attribute">To</span><span class="punctuation">: </span>&lt;sip:user@example.com&gt;;tag=xyz789</span><br><span class="line"><span class="attribute">Call-ID</span><span class="punctuation">: </span>abcdef123456@192.168.1.100</span><br><span class="line"><span class="attribute">CSeq</span><span class="punctuation">: </span>2 REGISTER</span><br><span class="line"><span class="attribute">Contact</span><span class="punctuation">: </span>&lt;sip:user@192.168.1.100:5060&gt;;expires=3600</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>0</span><br></pre></td></tr></table></figure>
+
+<p>注销流程</p>
+<pre class="mermaid">sequenceDiagram
+    participant UA
+    participant Proxy
+
+	UA->>+Proxy: REGISTER
+	Proxy-->>-UA: 200 OK</pre>
+
+<p>Expires字段是一个数字,表示秒数,其值为0表示终端从服务器退出状态码</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">REGISTER sip:41010500002000000001@4101050000 SIP/2.0</span><br><span class="line"><span class="attribute">Via</span><span class="punctuation">: </span>SIP/2.0.UDP 192.168.1.70:5060;rport;branch=z9hG4bK452554307</span><br><span class="line"><span class="attribute">From</span><span class="punctuation">: </span> &lt;sip:32000004561321000011@4101050000&gt;;tag=1763913758</span><br><span class="line"><span class="attribute">To</span><span class="punctuation">: </span>&lt;sip:32000004561321000011@4101050000&gt;</span><br><span class="line"><span class="attribute">Call-ID</span><span class="punctuation">: </span>745693128</span><br><span class="line"><span class="attribute">CSeq</span><span class="punctuation">: </span>2 REGISTER</span><br><span class="line"><span class="attribute">Contact</span><span class="punctuation">: </span>&lt;sip:32000004561321000011@192.168.1.70:5060&gt;</span><br><span class="line"><span class="attribute">Max-Forwards</span><span class="punctuation">: </span>70</span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>IP Camera</span><br><span class="line"><span class="attribute">Expires</span><span class="punctuation">: </span>0</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>0</span><br></pre></td></tr></table></figure>
+
+<p>基本呼叫建立流程</p>
+<pre class="mermaid">sequenceDiagram
+    participant UA1
+    participant Proxy
+    participant UA2
+
+	UA1->>+Proxy: INVITE
+	Proxy-->>UA1: 100 Trying
+	Proxy->>+UA2: INVITE
+	UA2-->>Proxy: 100 Trying
+	UA2-->>Proxy: 180 Ringing
+	Proxy-->>UA1: 180 Ringing
+	
+	UA2-->>-Proxy: 200 OK
+    Proxy->>UA2: ACK
+	Proxy-->>-UA1: 200 OK
+    UA1->>Proxy: ACK</pre>
+
+<p>正常呼叫释放过程</p>
+<pre class="mermaid">sequenceDiagram
+    participant UA1
+    participant Proxy
+    participant UA2
+	
+	UA2->>+Proxy: BYE
+    Proxy-->>-UA2: 200 OK
+	Proxy->>+UA1: BYE
+    UA1-->>-Proxy: 200 OK</pre>
+
+<p>被叫忙呼叫释放</p>
+<pre class="mermaid">sequenceDiagram
+    participant UA1
+    participant Proxy
+    participant UA2
+
+	UA1->>+Proxy: INVITE
+	Proxy-->>UA1: 100 Trying
+	Proxy->>+UA2: INVITE
+	UA2-->>Proxy: 100 Trying
+	
+	UA2-->>-Proxy: 486 Busy Here
+    Proxy->>UA2: ACK
+	Proxy-->>-UA1: 486 Busy Here
+    UA1->>Proxy: ACK</pre>
+
+<p>被叫无应答流程(主叫挂机)</p>
+<pre class="mermaid">sequenceDiagram
+    participant UA1
+    participant Proxy
+    participant UA2
+
+	UA1->>+Proxy: INVITE
+	Proxy-->>UA1: 100 Trying
+	Proxy->>+UA2: INVITE
+	UA2-->>Proxy: 100 Trying
+	UA2-->>Proxy: 180 Ringing
+	Proxy-->>UA1: 180 Ringing
+	
+	UA1->>Proxy: CANCEL
+	Proxy-->>UA1: 200 OK
+	Proxy->>UA2: CANCEL
+	UA2-->>Proxy: 200 OK
+	
+	UA2-->>-Proxy: 487 Request Terminated
+	Proxy->>UA2: ACK
+	Proxy-->>-UA1: 487 Request Terminated
+    UA1->>Proxy: ACK</pre>
+
+<p>被叫无应答流程(被叫超时未应答)</p>
+<pre class="mermaid">sequenceDiagram
+    participant UA1
+    participant Proxy
+    participant UA2
+
+	UA1->>+Proxy: INVITE
+	Proxy-->>UA1: 100 Trying
+	Proxy->>+UA2: INVITE
+	UA2-->>Proxy: 100 Trying
+	UA2-->>Proxy: 180 Ringing
+	Proxy-->>UA1: 180 Ringing
+	
+	UA2-->>-Proxy: 408 Request Timeout
+    Proxy->>UA2: ACK
+	Proxy-->>-UA1: 408 Request Timeout
+    UA1->>Proxy: ACK</pre>
+
+<p>Re-invite会话修改(音频通话中增加视频)</p>
+<pre class="mermaid">sequenceDiagram
+    participant UA1
+    participant Proxy
+    participant UA2
+
+	UA1->>+Proxy: INVITE
+	Proxy-->>UA1: 100 Trying
+	Proxy->>+UA2: INVITE
+	UA2-->>Proxy: 100 Trying
+	
+	UA2-->>-Proxy: 200 OK
+    Proxy->>UA2: ACK
+	Proxy-->>-UA1: 200 OK
+    UA1->>Proxy: ACK</pre>
+
+<p>通过保留From 标签、To 标签、Call-ID  这三个标识, 确保了 re-invite 与 之前的invite 是同一个对话</p>
+<p>终端A 通过10086端口来接收H264编码格式的数据</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">INVITE sip:1002@192.168.1.248:5060;transport=UDP SIP/2.0</span><br><span class="line"><span class="attribute">Via</span><span class="punctuation">: </span>SIP/2.0/UDP 192.168.1.74:5060;rport;branch=z9hG4bKPjA1b2c3d4e5f</span><br><span class="line"><span class="attribute">Max-Forwards</span><span class="punctuation">: </span>70</span><br><span class="line"><span class="attribute">From</span><span class="punctuation">: </span>&quot;1001&quot; &lt;sip:1001@192.168.1.248&gt;;tag=1a2b3c4d5e</span><br><span class="line"><span class="attribute">To</span><span class="punctuation">: </span>&quot;1002&quot; &lt;sip:1002@192.168.1.248&gt;;tag=6f7g8h9i0j</span><br><span class="line"><span class="attribute">Contact</span><span class="punctuation">: </span>&quot;1001&quot; &lt;sip:1001@192.168.1.74:5060&gt;</span><br><span class="line"><span class="attribute">Call-ID</span><span class="punctuation">: </span>xyz123456@192.168.1.74</span><br><span class="line"><span class="attribute">CSeq</span><span class="punctuation">: </span>2 INVITE</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/sdp</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>350</span><br><span class="line"></span><br><span class="line">v=0</span><br><span class="line">o=- 3900455104 3900455108 IN IP4 192.168.1.74</span><br><span class="line">s=Audio+Video Call</span><br><span class="line">c=IN IP4 192.168.1.74</span><br><span class="line">t=0 0</span><br><span class="line">m=audio 10008 RTP/AVP 0 101</span><br><span class="line">a=rtpmap:0 PCMU/8000</span><br><span class="line">a=rtpmap:101 telephone-event/8000</span><br><span class="line">m=video 10086 RTP/AVP 96</span><br><span class="line">a=rtpmap:96 H264/90000</span><br><span class="line">a=sendrecv</span><br></pre></td></tr></table></figure>
+
+<p>终端B通过200 OK的SDP部分,告诉对方,自己在10088端口准备接收,双方协商的视频编码类型是H.264</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">SIP/2.0 200 OK</span><br><span class="line"><span class="attribute">Via</span><span class="punctuation">: </span>SIP/2.0/UDP 192.168.1.74:5060;rport;branch=z9hG4bKPjA1b2c3d4e5f</span><br><span class="line"><span class="attribute">From</span><span class="punctuation">: </span>&quot;1001&quot; &lt;sip:1001@192.168.1.248&gt;;tag=1a2b3c4d5e</span><br><span class="line"><span class="attribute">To</span><span class="punctuation">: </span>&quot;1002&quot; &lt;sip:1002@192.168.1.248&gt;;tag=6f7g8h9i0j</span><br><span class="line"><span class="attribute">Contact</span><span class="punctuation">: </span>&quot;1002&quot; &lt;sip:1002@192.168.1.222:5060&gt;</span><br><span class="line"><span class="attribute">Call-ID</span><span class="punctuation">: </span>xyz123456@192.168.1.74</span><br><span class="line"><span class="attribute">CSeq</span><span class="punctuation">: </span>2 INVITE</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/sdp</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>345</span><br><span class="line"></span><br><span class="line">v=0</span><br><span class="line">o=- 3900455105 3900455109 IN IP4 192.168.1.222</span><br><span class="line">s=Audio+Video Call</span><br><span class="line">c=IN IP4 192.168.1.222</span><br><span class="line">t=0 0</span><br><span class="line">m=audio 10010 RTP/AVP 0 101</span><br><span class="line">a=rtpmap:0 PCMU/8000</span><br><span class="line">a=rtpmap:101 telephone-event/8000</span><br><span class="line">m=video 10086 RTP/AVP 96</span><br><span class="line">a=rtpmap:96 H264/90000</span><br></pre></td></tr></table></figure>
+
+<p>Update会话更新(视频编码切换)</p>
+<pre class="mermaid">sequenceDiagram
+    participant UA1
+    participant Proxy
+    participant UA2
+
+	UA1->>+Proxy: UPDATE
+	Proxy->>+UA2: UPDATE
+	
+	UA2-->>-Proxy: 200 OK
+	Proxy-->>-UA1: 200 OK</pre>
+
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">INVITE sip:1002@192.168.1.248:5060;transport=UDP SIP/2.0</span><br><span class="line"><span class="attribute">Via</span><span class="punctuation">: </span>SIP/2.0/UDP 192.168.1.74:5060;rport;branch=z9hG4bKPjCodecH265</span><br><span class="line"><span class="attribute">Max-Forwards</span><span class="punctuation">: </span>70</span><br><span class="line"><span class="attribute">From</span><span class="punctuation">: </span>&quot;1001&quot; &lt;sip:1001@192.168.1.248&gt;;tag=1a2b3c4d5e</span><br><span class="line"><span class="attribute">To</span><span class="punctuation">: </span>&quot;1002&quot; &lt;sip:1002@192.168.1.248&gt;;tag=6f7g8h9i0j</span><br><span class="line"><span class="attribute">Call-ID</span><span class="punctuation">: </span>xyz123456@192.168.1.74</span><br><span class="line"><span class="attribute">CSeq</span><span class="punctuation">: </span>4 INVITE</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/sdp</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>330</span><br><span class="line"></span><br><span class="line">v=0</span><br><span class="line">o=- 3900455104 3900455108 IN IP4 192.168.1.74</span><br><span class="line">s=Switch Video Codec(H264-&gt;H265)</span><br><span class="line">c=IN IP4 192.168.1.74</span><br><span class="line">t=0 0</span><br><span class="line">m=audio 10008 RTP/AVP 0 101</span><br><span class="line">a=rtpmap:0 PCMU/8000</span><br><span class="line">a=rtpmap:101 telephone-event/8000</span><br><span class="line">a=sendrecv</span><br><span class="line">m=video 10086 RTP/AVP 97</span><br><span class="line">a=rtpmap:97 H265/90000</span><br><span class="line">a=sendrecv</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">SIP/2.0 200 OK</span><br><span class="line"><span class="attribute">Via</span><span class="punctuation">: </span>SIP/2.0/UDP 192.168.1.74:5060;rport;branch=z9hG4bKPjCodecH265</span><br><span class="line"><span class="attribute">From</span><span class="punctuation">: </span>&quot;1001&quot; &lt;sip:1001@192.168.1.248&gt;;tag=1a2b3c4d5e</span><br><span class="line"><span class="attribute">To</span><span class="punctuation">: </span>&quot;1002&quot; &lt;sip:1002@192.168.1.248&gt;;tag=6f7g8h9i0j</span><br><span class="line"><span class="attribute">Call-ID</span><span class="punctuation">: </span>xyz123456@192.168.1.74</span><br><span class="line"><span class="attribute">CSeq</span><span class="punctuation">: </span>4 INVITE</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/sdp</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>325</span><br><span class="line"></span><br><span class="line">v=0</span><br><span class="line">o=- 3900455105 3900455109 IN IP4 192.168.1.222</span><br><span class="line">s=Switch Video Codec(H264-&gt;H265)</span><br><span class="line">c=IN IP4 192.168.1.222</span><br><span class="line">t=0 0</span><br><span class="line">m=audio 10010 RTP/AVP 0 101</span><br><span class="line">a=rtpmap:0 PCMU/8000</span><br><span class="line">a=rtpmap:101 telephone-event/8000</span><br><span class="line">a=sendrecv</span><br><span class="line">m=video 10088 RTP/AVP 97</span><br><span class="line">a=rtpmap:97 H265/90000</span><br><span class="line">a=sendrecv</span><br></pre></td></tr></table></figure>
+
+<h4 id="SDL规范描述语言"><a href="#SDL规范描述语言" class="headerlink" title="SDL规范描述语言"></a>SDL规范描述语言</h4><h4 id="SIP状态机"><a href="#SIP状态机" class="headerlink" title="SIP状态机"></a>SIP状态机</h4><h3 id="移动交换"><a href="#移动交换" class="headerlink" title="移动交换"></a>移动交换</h3><h3 id="移动通信及其发展"><a href="#移动通信及其发展" class="headerlink" title="移动通信及其发展"></a>移动通信及其发展</h3><h3 id="移动通信构成及关键技术"><a href="#移动通信构成及关键技术" class="headerlink" title="移动通信构成及关键技术"></a>移动通信构成及关键技术</h3><h3 id="5G交换原理"><a href="#5G交换原理" class="headerlink" title="5G交换原理"></a>5G交换原理</h3><h2 id="软件定义网络（SDN）"><a href="#软件定义网络（SDN）" class="headerlink" title="软件定义网络（SDN）"></a>软件定义网络（SDN）</h2><h3 id="SDN体系架构"><a href="#SDN体系架构" class="headerlink" title="SDN体系架构"></a>SDN体系架构</h3><h3 id="控制器工作原理"><a href="#控制器工作原理" class="headerlink" title="控制器工作原理"></a>控制器工作原理</h3><h2 id="交换技术与人工智能的融合：构建未来智算网络"><a href="#交换技术与人工智能的融合：构建未来智算网络" class="headerlink" title="交换技术与人工智能的融合：构建未来智算网络"></a>交换技术与人工智能的融合：构建未来智算网络</h2></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://baiyunabe.github.io">Abe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://baiyunabe.github.io/2026/05/23/switch/">http://baiyunabe.github.io/2026/05/23/switch/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%BA%A4%E6%8D%A2%E5%8E%9F%E7%90%86/">交换原理</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/05/23/hello-world/" title="Hello World"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2">Hello World</div></div><div class="info-2"><div class="info-item-1">Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new &quot;My New Post&quot;  More info: Writing Run server1$ hexo server  More info: Server Generate static files1$ hexo generate  More info: Generating Deploy to remote sites1$ hexo deploy  More info: Deployment </div></div></div></a><a class="pagination-related" href="/2025/09/21/scanf/" title="scanf函数在%d格式下的行为"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">scanf函数在%d格式下的行为</div></div><div class="info-2"><div class="info-item-1">问题起源猜数字游戏是一个非常经典的入门编程小游戏：程序会随机生成一个固定范围内的数字（比如 1-100），玩家需要不断输入数字进行猜测，程序会根据玩家输入的数字给出 “太大了” 或 “太小了” 的提示，直到玩家猜对为止。 这个游戏是编程初学者的必练项目，因为它能非常直观地帮我们练习条件语句和循环语句，是掌握基础编程逻辑的绝佳案例。 1234567891011121314151617181920212223242526#include &lt;stdio.h&gt;#include &lt;stdlib.h&gt;int main() &#123;  // 生成 1~100 之间的随机数  int number = rand() % 100 + 1;  int guess;    puts(&quot;猜数字游戏（1-100）&quot;);    for (;;) &#123;    printf(&quot;请输入你的猜测: &quot;);    scanf(&quot;%d&quot;, &amp;guess);        if (guess &gt; number) ...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Abe</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">4</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/BaiyunABE"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E6%A6%82%E8%AE%BA"><span class="toc-number">1.</span> <span class="toc-text">交换概论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E4%B8%8E%E9%80%9A%E4%BF%A1%E7%BD%91"><span class="toc-number">1.1.</span> <span class="toc-text">交换与通信网</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E6%96%B9%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">交换方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%B5%E8%B7%AF%E4%BA%A4%E6%8D%A2"><span class="toc-number">1.2.1.</span> <span class="toc-text">电路交换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E9%80%9F%E7%8E%87%E7%94%B5%E8%B7%AF%E4%BA%A4%E6%8D%A2"><span class="toc-number">1.2.2.</span> <span class="toc-text">多速率电路交换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2"><span class="toc-number">1.2.3.</span> <span class="toc-text">分组交换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%A7%E4%B8%AD%E7%BB%A7"><span class="toc-number">1.2.4.</span> <span class="toc-text">帧中继</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ATM%E4%BA%A4%E6%8D%A2%EF%BC%88Asynchronous-Transfer-Mode%EF%BC%89"><span class="toc-number">1.2.5.</span> <span class="toc-text">ATM交换（Asynchronous Transfer Mode）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.3.</span> <span class="toc-text">交换系统</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E7%BD%91%E7%BB%9C"><span class="toc-number">2.</span> <span class="toc-text">交换网络</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E7%BD%91%E7%BB%9C%E6%9E%84%E6%88%90"><span class="toc-number">2.1.</span> <span class="toc-text">交换网络构成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E5%8D%95%E5%85%83"><span class="toc-number">2.2.</span> <span class="toc-text">交换单元</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E5%8D%95%E5%85%83%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">2.2.1.</span> <span class="toc-text">交换单元基本概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A9%BA%E5%88%86%E4%BA%A4%E6%8D%A2%E5%8D%95%E5%85%83"><span class="toc-number">2.2.2.</span> <span class="toc-text">空分交换单元</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%B6%E5%88%86%E4%BA%A4%E6%8D%A2%E5%8D%95%E5%85%83"><span class="toc-number">2.2.3.</span> <span class="toc-text">时分交换单元</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E7%BD%91%E7%BB%9C-1"><span class="toc-number">2.3.</span> <span class="toc-text">交换网络</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">2.3.1.</span> <span class="toc-text">交换网络基本概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CLOS%E7%BD%91%E7%BB%9C"><span class="toc-number">2.3.2.</span> <span class="toc-text">CLOS网络</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#banyan%E7%BD%91%E7%BB%9C"><span class="toc-number">2.3.3.</span> <span class="toc-text">banyan网络</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#benes%E7%BD%91%E7%BB%9C"><span class="toc-number">2.3.4.</span> <span class="toc-text">benes网络</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2-1"><span class="toc-number">3.</span> <span class="toc-text">分组交换</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MPLS%E4%BA%A7%E7%94%9F%E8%83%8C%E6%99%AF"><span class="toc-number">3.1.</span> <span class="toc-text">MPLS产生背景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E5%8D%8F%E8%AE%AE%E6%A0%87%E8%AE%B0%E4%BA%A4%E6%8D%A2"><span class="toc-number">3.2.</span> <span class="toc-text">多协议标记交换</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFMPLS"><span class="toc-number">3.2.1.</span> <span class="toc-text">什么是MPLS</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MPLS%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="toc-number">3.2.2.</span> <span class="toc-text">MPLS网络体系结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MPLS%E5%9F%BA%E6%9C%AC%E4%BA%A4%E6%8D%A2%E5%8E%9F%E7%90%86"><span class="toc-number">3.2.3.</span> <span class="toc-text">MPLS基本交换原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MPLS%E4%BA%A4%E6%8D%A2%E8%8A%82%E7%82%B9%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="toc-number">3.2.4.</span> <span class="toc-text">MPLS交换节点体系结构</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E4%B8%80%E4%BB%A3%E4%BA%92%E8%81%94%E7%BD%91IPv6-%E6%8A%80%E6%9C%AF"><span class="toc-number">3.3.</span> <span class="toc-text">新一代互联网IPv6+技术</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SRv6"><span class="toc-number">3.3.1.</span> <span class="toc-text">SRv6</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%88%87%E7%89%87"><span class="toc-number">3.3.2.</span> <span class="toc-text">网络切片</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#APN6"><span class="toc-number">3.3.3.</span> <span class="toc-text">APN6</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SIP%E5%8D%8F%E8%AE%AE"><span class="toc-number">4.</span> <span class="toc-text">SIP协议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SIP%E5%8D%8F%E8%AE%AE%E4%BA%A7%E7%94%9F%E8%83%8C%E6%99%AF"><span class="toc-number">4.1.</span> <span class="toc-text">SIP协议产生背景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SIP%E5%8D%8F%E8%AE%AE%E5%9F%BA%E7%A1%80"><span class="toc-number">4.2.</span> <span class="toc-text">SIP协议基础</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SIP%E8%AE%BE%E8%AE%A1%E7%9B%AE%E6%A0%87"><span class="toc-number">4.2.1.</span> <span class="toc-text">SIP设计目标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SIP%E4%BD%93%E7%B3%BB%E6%9E%B6%E6%9E%84%E5%8F%8A%E5%8A%9F%E8%83%BD%E5%AE%9E%E4%BD%93"><span class="toc-number">4.2.2.</span> <span class="toc-text">SIP体系架构及功能实体</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SIP%E5%8D%8F%E8%AE%AE%E6%B6%88%E6%81%AF"><span class="toc-number">4.2.3.</span> <span class="toc-text">SIP协议消息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SIP%E5%8D%8F%E8%AE%AE%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B%E4%B8%8E%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86"><span class="toc-number">4.3.</span> <span class="toc-text">SIP协议基本流程与状态管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SIP%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">4.3.1.</span> <span class="toc-text">SIP基本流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SDL%E8%A7%84%E8%8C%83%E6%8F%8F%E8%BF%B0%E8%AF%AD%E8%A8%80"><span class="toc-number">4.3.2.</span> <span class="toc-text">SDL规范描述语言</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SIP%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="toc-number">4.3.3.</span> <span class="toc-text">SIP状态机</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A7%BB%E5%8A%A8%E4%BA%A4%E6%8D%A2"><span class="toc-number">4.4.</span> <span class="toc-text">移动交换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A7%BB%E5%8A%A8%E9%80%9A%E4%BF%A1%E5%8F%8A%E5%85%B6%E5%8F%91%E5%B1%95"><span class="toc-number">4.5.</span> <span class="toc-text">移动通信及其发展</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A7%BB%E5%8A%A8%E9%80%9A%E4%BF%A1%E6%9E%84%E6%88%90%E5%8F%8A%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF"><span class="toc-number">4.6.</span> <span class="toc-text">移动通信构成及关键技术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5G%E4%BA%A4%E6%8D%A2%E5%8E%9F%E7%90%86"><span class="toc-number">4.7.</span> <span class="toc-text">5G交换原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BD%AF%E4%BB%B6%E5%AE%9A%E4%B9%89%E7%BD%91%E7%BB%9C%EF%BC%88SDN%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">软件定义网络（SDN）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SDN%E4%BD%93%E7%B3%BB%E6%9E%B6%E6%9E%84"><span class="toc-number">5.1.</span> <span class="toc-text">SDN体系架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">5.2.</span> <span class="toc-text">控制器工作原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E6%8A%80%E6%9C%AF%E4%B8%8E%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E7%9A%84%E8%9E%8D%E5%90%88%EF%BC%9A%E6%9E%84%E5%BB%BA%E6%9C%AA%E6%9D%A5%E6%99%BA%E7%AE%97%E7%BD%91%E7%BB%9C"><span class="toc-number">6.</span> <span class="toc-text">交换技术与人工智能的融合：构建未来智算网络</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/23/hello-world/" title="Hello World">Hello World</a><time datetime="2026-05-23T05:45:32.638Z" title="Created 2026-05-23 13:45:32">2026-05-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/23/switch/" title="现代交换原理">现代交换原理</a><time datetime="2026-05-23T01:07:48.000Z" title="Created 2026-05-23 09:07:48">2026-05-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/21/scanf/" title="scanf函数在%d格式下的行为">scanf函数在%d格式下的行为</a><time datetime="2025-09-20T23:44:48.000Z" title="Created 2025-09-21 07:44:48">2025-09-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/23/csa/" title="计算机系统结构">计算机系统结构</a><time datetime="2025-05-23T01:14:48.000Z" title="Created 2025-05-23 09:14:48">2025-05-23</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Abe</span><span class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.5-b1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5-b1"></script><script src="/js/main.js?v=5.5.5-b1"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.1.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const parseViewBox = viewBox => {
+    if (!viewBox) return null
+    const parts = viewBox.trim().split(/[\s,]+/).map(n => Number(n))
+    if (parts.length !== 4 || parts.some(n => Number.isNaN(n))) return null
+    return parts
+  }
+
+  const getSvgViewBox = svg => {
+    const attr = parseViewBox(svg.getAttribute('viewBox'))
+    if (attr) return attr
+
+    // Fallback: use bbox to build a viewBox
+    try {
+      const bbox = svg.getBBox()
+      if (bbox && bbox.width && bbox.height) return [bbox.x, bbox.y, bbox.width, bbox.height]
+    } catch (e) {
+      // getBBox may fail on some edge cases; ignore
+    }
+
+    const w = Number(svg.getAttribute('width')) || 0
+    const h = Number(svg.getAttribute('height')) || 0
+    if (w > 0 && h > 0) return [0, 0, w, h]
+    return [0, 0, 100, 100]
+  }
+
+  const setSvgViewBox = (svg, vb) => {
+    svg.setAttribute('viewBox', `${vb[0]} ${vb[1]} ${vb[2]} ${vb[3]}`)
+  }
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
+
+  const openSvgInNewTab = ({ source, initViewBox }) => {
+    const getClonedSvg = () => {
+      if (typeof source === 'string') {
+        const template = document.createElement('template')
+        template.innerHTML = source.trim()
+        const svg = template.content.querySelector('svg')
+        return svg ? svg.cloneNode(true) : null
+      }
+      if (source && typeof source.cloneNode === 'function') {
+        return source.cloneNode(true)
+      }
+      return null
+    }
+
+    const clone = getClonedSvg()
+    if (!clone) return
+    if (initViewBox && initViewBox.length === 4) {
+      clone.setAttribute('viewBox', initViewBox.join(' '))
+    }
+    if (!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    if (!clone.getAttribute('xmlns:xlink') && clone.outerHTML.includes('xlink:')) {
+      clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+    }
+    // inject background to match current theme
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+    const bg = getComputedStyle(document.body).backgroundColor || (isDark ? '#1e1e1e' : '#ffffff')
+    if (!clone.style.background) clone.style.background = bg
+
+    const serializer = new XMLSerializer()
+    const svgSource = serializer.serializeToString(clone)
+    const htmlSource = `<!doctype html><html><head><meta charset="utf-8" />
+      <style>
+        html, body { width: 100%; height: 100%; margin: 0; display: flex; align-items: center; justify-content: center; background: ${bg}; }
+        svg { max-width: 100%; max-height: 100%; height: auto; width: auto; }
+      </style>
+      </head><body>${svgSource}</body></html>`
+    const blob = new Blob([htmlSource], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank', 'noopener')
+    setTimeout(() => URL.revokeObjectURL(url), 30000)
+  }
+
+  const attachMermaidViewerButton = wrap => {
+    let btn = wrap.querySelector('.mermaid-open-btn')
+    if (!btn) {
+      btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = 'mermaid-open-btn'
+      wrap.appendChild(btn)
+    }
+
+    btn.innerHTML = '<i class="fa fa-search fa-fw" aria-hidden="true"></i>'
+
+    if (!btn.__mermaidViewerBound) {
+      btn.addEventListener('click', e => {
+        e.preventDefault()
+        e.stopPropagation()
+        const svg = wrap.__mermaidOriginalSvg || wrap.querySelector('svg')
+        if (!svg) return
+        const initViewBox = wrap.__mermaidInitViewBox
+        if (typeof svg === 'string') {
+          openSvgInNewTab({ source: svg, initViewBox })
+          return
+        }
+        openSvgInNewTab({ source: svg, initViewBox })
+      })
+      btn.__mermaidViewerBound = true
+    }
+  }
+
+  // Zoom around a point (px, py) in the SVG viewport (in viewBox coordinates)
+  const zoomAtPoint = (vb, factor, px, py) => {
+    const w = vb[2] * factor
+    const h = vb[3] * factor
+    const nx = px - (px - vb[0]) * factor
+    const ny = py - (py - vb[1]) * factor
+    return [nx, ny, w, h]
+  }
+
+  const initMermaidGestures = wrap => {
+    const svg = wrap.querySelector('svg')
+    if (!svg) return
+
+    // Ensure viewBox exists so gestures always work
+    const initVb = getSvgViewBox(svg)
+    wrap.__mermaidInitViewBox = initVb
+    wrap.__mermaidCurViewBox = initVb.slice()
+    setSvgViewBox(svg, initVb)
+
+    // Avoid binding multiple times on themeChange/pjax
+    if (wrap.__mermaidGestureBound) return
+    wrap.__mermaidGestureBound = true
+
+    // Helper: map client (viewport) coordinate -> viewBox coordinate
+    const clientToViewBox = (clientX, clientY) => {
+      const rect = svg.getBoundingClientRect()
+      const vb = wrap.__mermaidCurViewBox || getSvgViewBox(svg)
+      const x = vb[0] + (clientX - rect.left) * (vb[2] / rect.width)
+      const y = vb[1] + (clientY - rect.top) * (vb[3] / rect.height)
+      return { x, y, rect, vb }
+    }
+
+    const state = {
+      pointers: new Map(),
+      startVb: null,
+      startDist: 0,
+      startCenter: null
+    }
+
+    const clampVb = vb => {
+      const init = wrap.__mermaidInitViewBox || vb
+      const minW = init[2] * 0.1
+      const maxW = init[2] * 10
+      const minH = init[3] * 0.1
+      const maxH = init[3] * 10
+      vb[2] = clamp(vb[2], minW, maxW)
+      vb[3] = clamp(vb[3], minH, maxH)
+      return vb
+    }
+
+    const setCurVb = vb => {
+      vb = clampVb(vb)
+      wrap.__mermaidCurViewBox = vb
+      setSvgViewBox(svg, vb)
+    }
+
+    const onPointerDown = e => {
+      // Allow only primary button for mouse
+      if (e.pointerType === 'mouse' && e.button !== 0) return
+      svg.setPointerCapture(e.pointerId)
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+      if (state.pointers.size === 1) {
+        state.startVb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+      } else if (state.pointers.size === 2) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        state.startDist = Math.hypot(dx, dy)
+        state.startVb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+        state.startCenter = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 }
+      }
+    }
+
+    const onPointerMove = e => {
+      if (!state.pointers.has(e.pointerId)) return
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+      // Pan with 1 pointer
+      if (state.pointers.size === 1 && state.startVb) {
+        const p = [...state.pointers.values()][0]
+        const prev = { x: e.clientX - e.movementX, y: e.clientY - e.movementY }
+        // movementX/Y unreliable on touch, compute from stored last position
+        const last = wrap.__mermaidLastSinglePointer || p
+        const dxClient = p.x - last.x
+        const dyClient = p.y - last.y
+        wrap.__mermaidLastSinglePointer = p
+
+        const { rect } = clientToViewBox(p.x, p.y)
+        const vb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+        const dx = dxClient * (vb[2] / rect.width)
+        const dy = dyClient * (vb[3] / rect.height)
+        setCurVb([vb[0] - dx, vb[1] - dy, vb[2], vb[3]])
+        return
+      }
+
+      // Pinch zoom with 2 pointers
+      if (state.pointers.size === 2 && state.startVb && state.startDist > 0) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        const dist = Math.hypot(dx, dy)
+        if (!dist) return
+        const factor = state.startDist / dist // dist bigger => zoom in (viewBox smaller)
+
+        const cx = (pts[0].x + pts[1].x) / 2
+        const cy = (pts[0].y + pts[1].y) / 2
+        const centerClient = { x: cx, y: cy }
+
+        const pxy = clientToViewBox(centerClient.x, centerClient.y)
+        const cpx = pxy.x
+        const cpy = pxy.y
+
+        const vb = zoomAtPoint(state.startVb, factor, cpx, cpy)
+        setCurVb(vb)
+      }
+    }
+
+    const onPointerUpOrCancel = e => {
+      state.pointers.delete(e.pointerId)
+      if (state.pointers.size === 0) {
+        state.startVb = null
+        state.startDist = 0
+        state.startCenter = null
+        wrap.__mermaidLastSinglePointer = null
+      } else if (state.pointers.size === 1) {
+        // reset single pointer baseline to avoid jump
+        wrap.__mermaidLastSinglePointer = [...state.pointers.values()][0]
+      }
+    }
+
+    // Wheel zoom (mouse/trackpad)
+    const onWheel = e => {
+      // ctrlKey on mac trackpad pinch; we treat both as zoom
+      e.preventDefault()
+      const delta = e.deltaY
+      const zoomFactor = delta > 0 ? 1.1 : 0.9
+      const { x, y } = clientToViewBox(e.clientX, e.clientY)
+      const vb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+      setCurVb(zoomAtPoint(vb, zoomFactor, x, y))
+    }
+
+    const onDblClick = () => {
+      const init = wrap.__mermaidInitViewBox
+      if (!init) return
+      wrap.__mermaidCurViewBox = init.slice()
+      setSvgViewBox(svg, init)
+    }
+
+    svg.addEventListener('pointerdown', onPointerDown)
+    svg.addEventListener('pointermove', onPointerMove)
+    svg.addEventListener('pointerup', onPointerUpOrCancel)
+    svg.addEventListener('pointercancel', onPointerUpOrCancel)
+    svg.addEventListener('wheel', onWheel, { passive: false })
+    svg.addEventListener('dblclick', onDblClick)
+  }
+
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+
+      // Clear old render (themeChange/pjax will rerun)
+      const oldSvg = item.querySelector('svg')
+      if (oldSvg) oldSvg.remove()
+      item.__mermaidGestureBound = false
+
+      const config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+        if (true) initMermaidGestures(item)
+        item.__mermaidOriginalSvg = svg
+        if (true) attachMermaidViewerButton(item)
+      }
+
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (false) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.12.2/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div>[object Object]<script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
